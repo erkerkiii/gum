@@ -1,4 +1,5 @@
 ﻿using System;
+using Gum.Core.Assert;
 
 namespace Gum.Pooling
 {
@@ -63,6 +64,8 @@ namespace Gum.Pooling
 
         private IPool<T> GetStackPool()
         {
+            GumAssert.IsTrue(_creationInfo.providerType != ProviderType.Undefined);
+            
             switch (_creationInfo.providerType)
             {
                 case ProviderType.FromPoolableInstanceProvider:

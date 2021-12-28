@@ -17,6 +17,14 @@
                 CreateException();
             }
         }
+        
+        public static void IsTrue(bool value)
+        {
+            if (!value)
+            {
+                CreateException();
+            }
+        }
 
         private static void CreateException(string message)
         {
