@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Gum.Pooling
 {
-    public sealed class Pool<T> : IPool<T> where T : IPoolable
+    public sealed class StackPool<T> : IPool<T> where T : IPoolable
     {
         private readonly Stack<IPoolable> _objectPool;
 
@@ -13,7 +13,9 @@ namespace Gum.Pooling
 
         private readonly ProviderType _providerType;
 
-        internal Pool(IPoolableInstanceProvider<T> poolableInstanceProvider, int initialSize = 0)
+        public int Count => _objectPool.Count;
+
+        internal StackPool(IPoolableInstanceProvider<T> poolableInstanceProvider, int initialSize = 0)
         {
             _poolableInstanceProvider = poolableInstanceProvider;
             _objectPool = new Stack<IPoolable>();
@@ -22,7 +24,7 @@ namespace Gum.Pooling
             CreatePool(initialSize);
         }
         
-        internal Pool(Func<object[], T> instanceProviderCallback, int initialSize = 0)
+        internal StackPool(Func<object[], T> instanceProviderCallback, int initialSize = 0)
         {
             _instanceProviderCallback = instanceProviderCallback;
             _objectPool = new Stack<IPoolable>();
@@ -94,16 +96,9 @@ namespace Gum.Pooling
             GC.SuppressFinalize(this);
         }
         
-        ~Pool()
+        ~StackPool()
         {
             ReleaseUnmanagedResources();
-        }
-        
-        internal enum ProviderType
-        {
-            Undefined,
-            FromPoolableInstanceProvider,
-            FromMethod
         }
     }
 }

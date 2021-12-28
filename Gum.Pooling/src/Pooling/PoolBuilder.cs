@@ -8,7 +8,7 @@ namespace Gum.Pooling
 
         public PoolBuilder<T> FromMethod(Func<object[], T> func)
         {
-            _creationInfo.providerType = Pool<T>.ProviderType.FromMethod;
+            _creationInfo.providerType = ProviderType.FromMethod;
             _creationInfo.instanceProviderCallback = func;
 
             return this;
@@ -16,7 +16,7 @@ namespace Gum.Pooling
 
         public PoolBuilder<T> FromPoolableInstanceProvider(IPoolableInstanceProvider<T> instanceProvider)
         {
-            _creationInfo.providerType = Pool<T>.ProviderType.FromPoolableInstanceProvider;
+            _creationInfo.providerType = ProviderType.FromPoolableInstanceProvider;
             _creationInfo.poolableInstanceProvider = instanceProvider;
 
             return this;
@@ -28,15 +28,47 @@ namespace Gum.Pooling
 
             return this;
         }
+        
+        public PoolBuilder<T> SetPoolType(PoolType poolType)
+        {
+            _creationInfo.poolType = poolType;
+            
+            return this;
+        }
 
         public IPool<T> Build()
         {
+            switch (_creationInfo.poolType)
+            {
+                case PoolType.Stack:
+                    return GetStackPool();
+                case PoolType.Dictionary:
+                    return GetDictionaryPool();
+                case PoolType.WeakStack:
+                    return GetWeakStackPool();
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private IPool<T> GetWeakStackPool()
+        {
+            throw new NotImplementedException();
+        }
+
+        private IPool<T> GetDictionaryPool()
+        {
+            throw new NotImplementedException();
+        }
+
+        private IPool<T> GetStackPool()
+        {
             switch (_creationInfo.providerType)
             {
-                case Pool<T>.ProviderType.FromPoolableInstanceProvider:
-                    return new Pool<T>(_creationInfo.poolableInstanceProvider, _creationInfo.initialSize);
-                case Pool<T>.ProviderType.FromMethod:
-                    return new Pool<T>(_creationInfo.instanceProviderCallback, _creationInfo.initialSize);
+                case ProviderType.FromPoolableInstanceProvider:
+                    return new StackPool<T>(_creationInfo.poolableInstanceProvider, _creationInfo.initialSize);
+                case ProviderType.FromMethod:
+                    return new StackPool<T>(_creationInfo.instanceProviderCallback, _creationInfo.initialSize);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -55,7 +87,9 @@ namespace Gum.Pooling
 
             public Func<object[], T> instanceProviderCallback;
 
-            public Pool<T>.ProviderType providerType;
+            public ProviderType providerType;
+
+            public PoolType poolType;
         }
     }
 }
