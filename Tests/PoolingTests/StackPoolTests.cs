@@ -3,6 +3,7 @@ using NUnit.Framework;
 
 namespace Tests.PoolingTests
 {
+    [TestFixture]
     public class StackPoolTests
     {
         private IPool<MockPoolable> _pool;
@@ -57,6 +58,15 @@ namespace Tests.PoolingTests
             _pool = null;
             
             Assert.IsTrue(mockPoolable.IsErased);
+        }
+
+        [TearDown]
+        public void CleanUp()
+        {
+            _pool?.Dispose();
+            _pool = null;
+            _poolBuilder.Clear();
+            _poolBuilder = null;
         }
     }
 }

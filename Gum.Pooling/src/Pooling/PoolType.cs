@@ -3,7 +3,6 @@
     public enum PoolType
     {
         Stack,
-        Dictionary,
         WeakStack
     }
 }

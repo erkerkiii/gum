@@ -43,8 +43,6 @@ namespace Gum.Pooling
             {
                 case PoolType.Stack:
                     return GetStackPool();
-                case PoolType.Dictionary:
-                    return GetDictionaryPool();
                 case PoolType.WeakStack:
                     return GetWeakStackPool();
                 default:
@@ -53,11 +51,6 @@ namespace Gum.Pooling
         }
 
         private IPool<T> GetWeakStackPool()
-        {
-            throw new NotImplementedException();
-        }
-
-        private IPool<T> GetDictionaryPool()
         {
             throw new NotImplementedException();
         }
