@@ -2,7 +2,7 @@
 
 namespace Gum.Pooling
 {
-    public class PoolCollection<T> where T : IPoolable
+    public sealed class PoolCollection<T> where T : IPoolable
     {
         private readonly Dictionary<int, IPool<T>> _poolDictionary;
 

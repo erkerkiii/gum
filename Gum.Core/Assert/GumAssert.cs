@@ -26,6 +26,14 @@
             }
         }
 
+        public static void GreaterThanZero(int value)
+        {
+            if (value < 1)
+            {
+                CreateException();
+            }
+        }
+        
         private static void CreateException(string message)
         {
             throw new GumException(message);

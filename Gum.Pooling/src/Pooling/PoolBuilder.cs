@@ -52,7 +52,17 @@ namespace Gum.Pooling
 
         private IPool<T> GetWeakStackPool()
         {
-            throw new NotImplementedException();
+            GumAssert.IsTrue(_creationInfo.providerType != ProviderType.Undefined);
+            
+            switch (_creationInfo.providerType)
+            {
+                case ProviderType.FromPoolableInstanceProvider:
+                    return new WeakStackPool<T>(_creationInfo.poolableInstanceProvider, _creationInfo.initialSize);
+                case ProviderType.FromMethod:
+                    return new WeakStackPool<T>(_creationInfo.instanceProviderCallback, _creationInfo.initialSize);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private IPool<T> GetStackPool()
