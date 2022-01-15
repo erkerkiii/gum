@@ -14,13 +14,6 @@ namespace Gum.Pooling
             _poolBuilder = poolBuilder;
         }
 
-        public void Put(int key, T value)
-        {
-            EnsureExistence(key);
-
-            _poolDictionary[key].Put(value);
-        }
-        
         public T Get(int key, object[] args = null)
         {
             EnsureExistence(key);

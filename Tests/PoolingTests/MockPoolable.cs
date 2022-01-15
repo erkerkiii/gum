@@ -1,9 +1,12 @@
-﻿using Gum.Pooling;
+﻿using System;
+using Gum.Pooling;
 
 namespace Tests.PoolingTests
 {
     public class MockPoolable : IPoolable
     {
+        public event Action<IPoolable> OnReturnToPoolRequested;
+
         public bool IsActive { get; private set; }
         public bool IsErased { get; private set; }
 
@@ -17,9 +20,11 @@ namespace Tests.PoolingTests
             IsActive = true;
         }
 
-        public void Deactivate()
+        public void ReturnToPool()
         {
             IsActive = false;
+
+            OnReturnToPoolRequested?.Invoke(this);
         }
 
         public void Erase()

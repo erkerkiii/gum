@@ -3,16 +3,24 @@ using Gum.Core.Assert;
 
 namespace Gum.Core.DataStructures
 {
-    public class WeakStack<T>
+    public class WeakStack<T> where T : class
     {
         private WeakReference[] _collection;
 
         private int _index;
 
         public int Count => _index;
-        
+
+        private readonly Func<T> _instanceProviderCallback;
+
         public WeakStack()
         {
+            _collection = new WeakReference[4];
+        }
+        
+        public WeakStack(Func<T> instanceProviderCallback)
+        {
+            _instanceProviderCallback = instanceProviderCallback;
             _collection = new WeakReference[4];
         }
         
@@ -35,11 +43,9 @@ namespace Gum.Core.DataStructures
         {
             GumAssert.GreaterThanZero(_index);
 
-            T poppedInstance = (T)_collection[--_index].Target;
-            if (poppedInstance == null)
-            {
-                poppedInstance = Activator.CreateInstance<T>();
-            }
+            T poppedInstance = (T)_collection[--_index].Target ?? (_instanceProviderCallback == null
+                ? Activator.CreateInstance<T>()
+                : _instanceProviderCallback.Invoke());
 
             return poppedInstance;
         }

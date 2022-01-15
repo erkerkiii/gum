@@ -42,9 +42,8 @@ namespace Gum.Pooling
             }
         }
 
-        public void Put(T poolable)
+        private void Put(T poolable)
         {
-            poolable.Deactivate();
             _objectPool.Push(poolable);
         }
 
@@ -60,15 +59,20 @@ namespace Gum.Pooling
 
         private T Create(object[] args = null)
         {
+            T instance;
             switch (_providerType)
             {
                 case ProviderType.FromPoolableInstanceProvider:
-                    return _poolableInstanceProvider.Create(args);
+                    instance = _poolableInstanceProvider.Create(args);
+                    break;
                 case ProviderType.FromMethod:
-                    return _instanceProviderCallback.Invoke(args);
+                    instance = _instanceProviderCallback.Invoke(args);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            return instance;
         }
 
         private void DestroyPool()

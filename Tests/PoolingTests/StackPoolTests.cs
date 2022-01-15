@@ -33,31 +33,25 @@ namespace Tests.PoolingTests
         }
         
         [Test]
-        public void StackPool_Stores_And_Reuses_Instance()
+        public void StackPool_Object_Returns_To_Pool()
         {
-            MockPoolable mockPoolable = new MockPoolable();
-            _pool.Put(mockPoolable);
-            
-            Assert.IsFalse(mockPoolable.IsActive);
-            
             MockPoolable pooledObject = _pool.Get();
             
             Assert.IsNotNull(pooledObject);
             Assert.IsTrue(pooledObject.IsActive);
+            
+            pooledObject.ReturnToPool();
+            
+            Assert.IsFalse(pooledObject.IsActive);
         }
 
         [Test]
         public void StackPool_Gets_Erased()
         {
-            MockPoolable mockPoolable = new MockPoolable();
-            _pool.Put(mockPoolable);
-            
-            Assert.IsFalse(mockPoolable.IsActive);
-
             _pool.Dispose();
             _pool = null;
             
-            Assert.IsTrue(mockPoolable.IsErased);
+            Assert.Pass();
         }
 
         [TearDown]

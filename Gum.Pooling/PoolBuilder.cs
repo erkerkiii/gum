@@ -39,6 +39,8 @@ namespace Gum.Pooling
 
         public IPool<T> Build()
         {
+            GumAssert.IsTrue(_creationInfo.providerType != ProviderType.Undefined, "No provider type defined!");
+
             switch (_creationInfo.poolType)
             {
                 case PoolType.Stack:
@@ -52,8 +54,6 @@ namespace Gum.Pooling
 
         private IPool<T> GetWeakStackPool()
         {
-            GumAssert.IsTrue(_creationInfo.providerType != ProviderType.Undefined);
-            
             switch (_creationInfo.providerType)
             {
                 case ProviderType.FromPoolableInstanceProvider:
@@ -67,8 +67,6 @@ namespace Gum.Pooling
 
         private IPool<T> GetStackPool()
         {
-            GumAssert.IsTrue(_creationInfo.providerType != ProviderType.Undefined);
-            
             switch (_creationInfo.providerType)
             {
                 case ProviderType.FromPoolableInstanceProvider:
