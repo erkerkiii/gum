@@ -3,7 +3,7 @@ using Gum.Core.Assert;
 
 namespace Gum.Pooling
 {
-    public class PoolBuilder<T> where T : IPoolable
+    public sealed class PoolBuilder<T> where T : IPoolable
     {
         private CreationInfo _creationInfo;
 

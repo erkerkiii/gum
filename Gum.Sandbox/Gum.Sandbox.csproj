@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Gum.Core\Gum.Core.csproj" />
+      <ProjectReference Include="..\Gum.Pooling\Gum.Pooling.csproj" />
+      <ProjectReference Include="..\Gum.WebRequest\Gum.WebRequest.csproj" />
+    </ItemGroup>
+
+</Project>
