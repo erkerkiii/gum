@@ -1,71 +1,76 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Gum.WebRequest
 {
-    public class GumWebRequest : IDisposable
+    public sealed class GumWebRequest
     {
         private static readonly HttpClient HttpClient = new HttpClient();
 
-        public readonly Dictionary<string, string> headers = new Dictionary<string, string>();
+        private readonly HttpRequestMessage _httpRequestMessage;
 
-        public async Task<Response> Get(string url)
+        public bool IsDone { get; private set; }
+        
+        public Response Result { get; private set; }
+        
+        private GumWebRequest(HttpRequestMessage httpRequestMessage)
         {
-            using (HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url))
-            {
-                int headerCount = headers.Count;
-                for (int index = 0; index < headerCount; index++)
-                {
-                    KeyValuePair<string, string> keyValuePair = headers.ElementAt(index);
-                    httpRequestMessage.Headers.Add(keyValuePair.Key, keyValuePair.Value);
-                }
+            _httpRequestMessage = httpRequestMessage;
+        }
 
-                Task<HttpResponseMessage> response = HttpClient.SendAsync(httpRequestMessage);
-                await response;
-                string text = await response.Result.Content.ReadAsStringAsync();
-                return new Response((int)response.Result.StatusCode, text);
-            }
+        public void AddHeader(string key, string value)
+        {
+            _httpRequestMessage.Headers.Add(key, value);
         }
         
-        public async Task<Response> Post(string url, string content = null)
+        public void AddHeader(string key, IEnumerable<string> value)
         {
-            using (HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, url))
-            {
-                if (!string.IsNullOrEmpty(content))
-                {
-                    httpRequestMessage.Content = new StringContent(content);
-                }
-                
-                int headerCount = headers.Count;
-                for (int index = 0; index < headerCount; index++)
-                {
-                    KeyValuePair<string, string> keyValuePair = headers.ElementAt(index);
-                    httpRequestMessage.Headers.Add(keyValuePair.Key, keyValuePair.Value);
-                }
-
-                Task<HttpResponseMessage> response = HttpClient.SendAsync(httpRequestMessage);
-                await response;
-                string text = await response.Result.Content.ReadAsStringAsync();
-                return new Response((int)response.Result.StatusCode, text);
-            }
+            _httpRequestMessage.Headers.Add(key, value);
         }
 
-        public void Dispose()
+        public static GumWebRequest Get(string url)
         {
-            headers.Clear();
-            GC.SuppressFinalize(this);
+            return new GumWebRequest(new HttpRequestMessage(HttpMethod.Get, url));
         }
         
+        public static GumWebRequest Post(string url, HttpContent httpContent = null)
+        {
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, url);
+            httpRequestMessage.Content = httpContent;
+            
+            return new GumWebRequest(httpRequestMessage);
+        }
+        
+        public static GumWebRequest Put(string url, HttpContent httpContent = null)
+        {
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, url);
+            httpRequestMessage.Content = httpContent;
+            
+            return new GumWebRequest(httpRequestMessage);
+        }
+
+        public async Task<Response> Send()
+        {
+            Task<HttpResponseMessage> response = HttpClient.SendAsync(_httpRequestMessage);
+            await response;
+            HttpResponseMessage responseMessage = response.Result;
+            
+            string text = await responseMessage.Content.ReadAsStringAsync();
+
+            IsDone = true;
+
+            Result = new Response((int)responseMessage.StatusCode, text);
+            return Result;
+        }
+
         public readonly struct Response
         {
             public readonly int StatusCode;
             
             public readonly string Text;
-
-            public Response(int statusCode, string text)
+            
+            internal Response(int statusCode, string text)
             {
                 StatusCode = statusCode;
                 Text = text;
