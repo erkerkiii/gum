@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.Json;
 
 namespace Gum.Sandbox
 {
@@ -13,28 +15,27 @@ namespace Gum.Sandbox
             using (StreamWriter sw = File.CreateText(
                        $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}/Test.cs"))
             {
-                DataEntry[] dataEntries = new DataEntry[3];
-                dataEntries[0] = new DataEntry("First");
-                dataEntries[1] = new DataEntry("Second");
-                dataEntries[2] = new DataEntry("Third");
-                
-                
 
+                DataEntry<string>[] dataEntries = 
+                {
+                    new("First"),
+                    new("Second"),
+                    new("Third")
+                };
+                
                 for (int index = 0; index < dataEntries.Length; index++)
                 {
                     stringBuilder.AppendLine($"\t\t{dataEntries[index].Value},");
+                    Console.WriteLine(dataEntries[index].ToJson());
                 }
                 
                 KeywordMap[CONTENT] = stringBuilder.ToString();
                 KeywordMap[NAMESPACE] = "Gum";
                 KeywordMap[ENUM] = "TestEnum";
 
-                string finalString = ENUM_TEMPLATE;
-                foreach (KeyValuePair<string,string> keyValuePair in KeywordMap)
-                {
-                    finalString = finalString.Replace(keyValuePair.Key, keyValuePair.Value);
-                }
-                
+                string finalString = KeywordMap.Aggregate(ENUM_TEMPLATE,
+                    (current, keyValuePair) => current.Replace(keyValuePair.Key, keyValuePair.Value));
+
                 sw.Write(finalString);
                 sw.Close();
             }
@@ -61,14 +62,17 @@ namespace Gum.Sandbox
                                              "\t}" +
                                              "\n}";
         
-        public readonly struct DataEntry
+        [Serializable]
+        public readonly struct DataEntry<T>
         {
-            public readonly string Value;
+            public readonly T Value;
 
-            public DataEntry(string value)
+            public DataEntry(T value)
             {
                 Value = value;
             }
+
+            public string ToJson() => JsonSerializer.Serialize(Value);
         }
     }
 }
