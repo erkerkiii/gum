@@ -7,60 +7,23 @@
         xmlns:jlinq="clr-namespace:Newtonsoft.Json.Linq;assembly=Newtonsoft.Json"
         mc:Ignorable="d"
         Title="Drafter" Height="450" Width="800">
-    <Window.Resources>
-        <local:MethodToValueConverter x:Key="MethodToValueConverter" />
-        <HierarchicalDataTemplate DataType="{x:Type jlinq:JArray}"
-                                  ItemsSource="{Binding Converter={StaticResource MethodToValueConverter}, ConverterParameter='Children'}">
-            <TextBlock Text="Array">
-            </TextBlock>
-        </HierarchicalDataTemplate>
-        <HierarchicalDataTemplate DataType="{x:Type jlinq:JProperty}"
-                                  ItemsSource="{Binding Converter={StaticResource MethodToValueConverter}, ConverterParameter='Children'}">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Property name: " />
-                <TextBlock Text="{Binding Path=Name, Mode=OneWay}" />
-            </StackPanel>
-        </HierarchicalDataTemplate>
-        <HierarchicalDataTemplate DataType="{x:Type jlinq:JObject}"
-                                  ItemsSource="{Binding Converter={StaticResource MethodToValueConverter}, ConverterParameter='Children'}">
-            <TextBlock Text="Object">
-            </TextBlock>
-        </HierarchicalDataTemplate>
-        <HierarchicalDataTemplate DataType="{x:Type jlinq:JConstructor}"
-                                  ItemsSource="{Binding Converter={StaticResource MethodToValueConverter}, ConverterParameter='Children'}">
-            <TextBlock Text="Constructor">
-            </TextBlock>
-        </HierarchicalDataTemplate>
-        <HierarchicalDataTemplate DataType="{x:Type jlinq:JRaw}"
-                                  ItemsSource="{Binding Converter={StaticResource MethodToValueConverter}, ConverterParameter='Children'}">
-            <TextBlock Text="Raw">
-            </TextBlock>
-        </HierarchicalDataTemplate>
-        <DataTemplate DataType="{x:Type jlinq:JValue}">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Value: " />
-                <TextBox Text="{Binding Path=Value, Mode=TwoWay}" />
-            </StackPanel>
-        </DataTemplate>
-    </Window.Resources>
     <Grid Background="DarkBlue">
         <TextBox Height="25" Width="125" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10, 10, 0,10"
                  Name="RepositoryEntryTextBox">
         </TextBox>
         <Button Height="25" Margin="140,10,0,0" Name="AddRepositoryButton" VerticalAlignment="Top"
-                HorizontalAlignment="Left" Width="76" Click="OnAddRepositoryButtonClicked">
+                HorizontalAlignment="Left" Width="100" Click="OnAddRepositoryButtonClicked" Background="#FFDDDDDD">
+            New Repository
+        </Button>
+        <Button Height="25" Margin="250,10,0,0" Name="AddNewEntryButton" VerticalAlignment="Top"
+                HorizontalAlignment="Left" Width="76" Click="OnAddNewEntryButtonClicked" Background="#FFDDDDDD">
             New Entry
         </Button>
-        <ListBox Height="250" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10, 50, 0, 10"
+        <ListBox Height="300" Width="125" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50,0,0"
                  Name="RepositoryListBox" SelectionChanged="OnRepositoryItemSelected">
         </ListBox>
-        <TreeView Height="300" Width="600" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 50, 10, 10"
-                  Name="TreeView">
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="True" />
-                </Style>
-            </TreeView.ItemContainerStyle>
-        </TreeView>
+        <Button x:Name="SaveButton" Content="Save" HorizontalAlignment="Left" Margin="730,25,0,0" VerticalAlignment="Top" Width="60"/>
+        <Button x:Name="ExportButton" Content="Export" HorizontalAlignment="Left" Margin="665,25,0,0" VerticalAlignment="Top" Width="60" Click="OnExportButtonClicked"/>
+        <Button x:Name="CodegenButton" Content="Codegen" HorizontalAlignment="Left" Margin="600,25,0,0" VerticalAlignment="Top" Width="60" Click="OnCodegenButtonClicked"/>
     </Grid>
 </Window>

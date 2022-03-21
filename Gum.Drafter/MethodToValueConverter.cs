@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Reflection;
 using System.Windows.Data;
 
 namespace Gum.Drafter
@@ -8,18 +9,20 @@ namespace Gum.Drafter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var methodName = parameter as string;
-            if (value == null || methodName == null)
+            if (value == null || parameter is not string methodName)
+            {
                 return null;
-            var methodInfo = value.GetType().GetMethod(methodName, new Type[0]);
-            if (methodInfo == null)
-                return null;
-            return methodInfo.Invoke(value, new object[0]);
+            }
+            
+            MethodInfo methodInfo = value.GetType().GetMethod(methodName, Type.EmptyTypes);
+            return methodInfo == null
+                ? null
+                : methodInfo.Invoke(value, Array.Empty<object>());
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotSupportedException(GetType().Name + " can only be used for one way conversion.");
+            throw new NotSupportedException($"{GetType().Name} can only be used for one way conversion.");
         }
     }
 }

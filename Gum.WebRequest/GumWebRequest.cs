@@ -1,18 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Gum.WebRequest
 {
-    public sealed class GumWebRequest
+    public sealed class GumWebRequest : IDisposable
     {
+        private const int BUFFER_SIZE = 8192;
+        
         private static readonly HttpClient HttpClient = new HttpClient();
 
         private readonly HttpRequestMessage _httpRequestMessage;
 
+        public Response Result { get; private set; }
+
         public bool IsDone { get; private set; }
         
-        public Response Result { get; private set; }
+        public float Progress { get; private set; }
+        
+        public long BytesReceived { get; private set; }
+        public long TotalBytesToReceive { get; private set; }
+        
+
+        private CancellationTokenSource _cancellationTokenSource;
         
         private GumWebRequest(HttpRequestMessage httpRequestMessage)
         {
@@ -50,30 +65,82 @@ namespace Gum.WebRequest
             return new GumWebRequest(httpRequestMessage);
         }
 
-        public async Task<Response> Send()
+        public async Task<Response> SendAsync()
         {
-            Task<HttpResponseMessage> response = HttpClient.SendAsync(_httpRequestMessage);
-            await response;
-            HttpResponseMessage responseMessage = response.Result;
+            _cancellationTokenSource = new CancellationTokenSource();
+            HttpResponseMessage responseMessage =
+                await HttpClient.SendAsync(_httpRequestMessage, _cancellationTokenSource.Token);
+
+            long? contentLength = responseMessage.Content.Headers.ContentLength;
+            if (contentLength.HasValue)
+            {
+                TotalBytesToReceive = contentLength.Value;
+            }
             
-            string text = await responseMessage.Content.ReadAsStringAsync();
+            byte[] buffer = new byte[BUFFER_SIZE];
+            List<byte> bytes = new List<byte>();
+            using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+            {
+                int bytesRead;
+                while ((bytesRead = await responseStream
+                           .ReadAsync(buffer, 0, BUFFER_SIZE, _cancellationTokenSource.Token).ConfigureAwait(false)) > 0)
+                {
+                    bytes.AddRange(buffer.Take(bytesRead));
+                    BytesReceived += bytesRead;
+                    Progress = (float)BytesReceived / (float)TotalBytesToReceive;
+                }
+            }
 
             IsDone = true;
-
-            Result = new Response((int)responseMessage.StatusCode, text);
+            Result = new Response((int)responseMessage.StatusCode, bytes.ToArray());
             return Result;
         }
 
-        public readonly struct Response
+        public void Cancel()
+        {
+            _cancellationTokenSource?.Cancel();
+        }
+
+        public void Dispose()
+        {
+            _httpRequestMessage?.Dispose();
+            Result?.Dispose();
+            _cancellationTokenSource?.Dispose();
+
+            BytesReceived = 0;
+            TotalBytesToReceive = 0;
+        }
+        
+        public sealed class Response : IDisposable
         {
             public readonly int StatusCode;
             
-            public readonly string Text;
+            public byte[] Data { get; private set; }
+
+            private string _cachedText;
             
-            internal Response(int statusCode, string text)
+            public string Text
+            {
+                get
+                {
+                    if (string.IsNullOrEmpty(_cachedText))
+                    {
+                        _cachedText = Encoding.Default.GetString(Data);
+                    }
+
+                    return _cachedText;
+                }
+            }
+
+            internal Response(int statusCode, byte[] data)
             {
                 StatusCode = statusCode;
-                Text = text;
+                Data = data;
+            }
+
+            public void Dispose()
+            {
+                Data = null;
             }
         }
     }

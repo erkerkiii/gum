@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Gum.Drafter.Model
@@ -8,15 +11,15 @@ namespace Gum.Drafter.Model
     {
         public string Name { get; }
 
-        public JObject Source { get; }
+        public List<Entity> entities = new();
 
-        public Repository(string name, JObject source)
+        public Repository(string name)
         {
             Name = name;
-            Source = source;
-            Source["repositoryName"] = Name;
         }
 
         public override string ToString() => Name;
+
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented);
     }
 }

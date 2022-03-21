@@ -1,20 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Gum.Core.Utility;
 using Gum.Drafter.Model;
-using Newtonsoft.Json.Linq;
 
 namespace Gum.Drafter
 {
@@ -30,15 +17,36 @@ namespace Gum.Drafter
 
         private void OnAddRepositoryButtonClicked(object sender, RoutedEventArgs e)
         {
-            RepositoryListBox.Items.Add(new Repository(RepositoryEntryTextBox.Text, new JObject()));
+            RepositoryListBox.Items.Add(new Repository(RepositoryEntryTextBox.Text));
         }
 
         private void OnRepositoryItemSelected(object sender, RoutedEventArgs e)
         {
-            Repository selectedItem = RepositoryListBox.SelectedItem as Repository;
-            TreeView.ItemsSource = null;
-            TreeView.Items.Clear();
-            TreeView.ItemsSource = (selectedItem).Source.Children();
+            Repository repository = GetSelectedRepository();
+        }
+
+        private Repository GetSelectedRepository()
+        {
+            return RepositoryListBox.SelectedItem as Repository;
+        }
+
+        private void OnAddNewEntryButtonClicked(object sender, RoutedEventArgs e)
+        {
+            Repository repository = GetSelectedRepository();
+        }
+
+        private void OnCodegenButtonClicked(object sender, RoutedEventArgs e)
+        {
+            Repository repository = RepositoryListBox.SelectedItem as Repository;
+            CodeGenerator
+                .GenerateFromRepositoryAsync(repository, "Gum",
+                    Environment.GetFolderPath(Environment.SpecialFolder.Desktop)).UnhandledAsync();
+        }
+
+        private void OnExportButtonClicked(object sender, RoutedEventArgs e)
+        {
+            Repository repository = GetSelectedRepository();
+            MessageBox.Show(repository?.ToJson());
         }
     }
 }
