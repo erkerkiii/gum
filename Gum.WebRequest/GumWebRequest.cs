@@ -16,22 +16,15 @@ namespace Gum.WebRequest
         private static readonly HttpClient HttpClient = new HttpClient();
 
         private readonly HttpRequestMessage _httpRequestMessage;
-
-        public Response Result { get; private set; }
-
-        public bool IsDone { get; private set; }
         
-        public float Progress { get; private set; }
-        
-        public long BytesReceived { get; private set; }
-        public long TotalBytesToReceive { get; private set; }
-        
-
         private CancellationTokenSource _cancellationTokenSource;
+        
+        public DownloadHandle downloadHandle { get; }
         
         private GumWebRequest(HttpRequestMessage httpRequestMessage)
         {
             _httpRequestMessage = httpRequestMessage;
+            downloadHandle = new DownloadHandle();
         }
 
         public void AddHeader(string key, string value)
@@ -70,11 +63,21 @@ namespace Gum.WebRequest
             _cancellationTokenSource = new CancellationTokenSource();
             HttpResponseMessage responseMessage =
                 await HttpClient.SendAsync(_httpRequestMessage, _cancellationTokenSource.Token);
+            
+            downloadHandle.Status = Status.OnGoing;
+
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                downloadHandle.Error = $"Failed with code: {responseMessage.StatusCode}";
+                downloadHandle.Status = Status.Fail;
+                downloadHandle.IsDone = true;
+                return null;
+            }
 
             long? contentLength = responseMessage.Content.Headers.ContentLength;
             if (contentLength.HasValue)
             {
-                TotalBytesToReceive = contentLength.Value;
+                downloadHandle.TotalBytesToReceive = contentLength.Value;
             }
             
             byte[] buffer = new byte[BUFFER_SIZE];
@@ -83,17 +86,23 @@ namespace Gum.WebRequest
             {
                 int bytesRead;
                 while ((bytesRead = await responseStream
-                           .ReadAsync(buffer, 0, BUFFER_SIZE, _cancellationTokenSource.Token).ConfigureAwait(false)) > 0)
+                           .ReadAsync(buffer, 0, BUFFER_SIZE, _cancellationTokenSource.Token)
+                           .ConfigureAwait(false)) > 0)
                 {
                     bytes.AddRange(buffer.Take(bytesRead));
-                    BytesReceived += bytesRead;
-                    Progress = (float)BytesReceived / (float)TotalBytesToReceive;
+                    downloadHandle.BytesReceived += bytesRead;
+                    
+                    if (downloadHandle.TotalBytesToReceive > 0)
+                    {
+                        downloadHandle.Progress = (float)downloadHandle.BytesReceived / (float)downloadHandle.TotalBytesToReceive;
+                    }
                 }
             }
-
-            IsDone = true;
-            Result = new Response((int)responseMessage.StatusCode, bytes.ToArray());
-            return Result;
+            
+            downloadHandle.Status = Status.Success;
+            downloadHandle.Result = new Response((int)responseMessage.StatusCode, bytes.ToArray());
+            downloadHandle.IsDone = true;
+            return downloadHandle.Result;
         }
 
         public void Cancel()
@@ -104,11 +113,7 @@ namespace Gum.WebRequest
         public void Dispose()
         {
             _httpRequestMessage?.Dispose();
-            Result?.Dispose();
             _cancellationTokenSource?.Dispose();
-
-            BytesReceived = 0;
-            TotalBytesToReceive = 0;
         }
         
         public sealed class Response : IDisposable
@@ -125,7 +130,7 @@ namespace Gum.WebRequest
                 {
                     if (string.IsNullOrEmpty(_cachedText))
                     {
-                        _cachedText = Encoding.Default.GetString(Data);
+                        _cachedText = Encoding.UTF8.GetString(Data);
                     }
 
                     return _cachedText;
@@ -142,6 +147,30 @@ namespace Gum.WebRequest
             {
                 Data = null;
             }
+        }
+        
+        public sealed class DownloadHandle
+        {
+            public float Progress { get; internal set; }
+        
+            public long BytesReceived { get; internal set; }
+            public long TotalBytesToReceive { get; internal set; }
+            
+            public Response Result { get; internal set; }
+
+            public bool IsDone { get; internal set; }
+            
+            public string Error { get; internal set; }
+
+            public Status Status { get; internal set; } = Status.None;
+        }
+
+        public enum Status
+        {
+            None,
+            OnGoing,
+            Success,
+            Fail
         }
     }
 }
