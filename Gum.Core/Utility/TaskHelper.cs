@@ -4,7 +4,7 @@ namespace Gum.Core.Utility
 {
     public static class TaskHelper
     {
-        public static void UnhandledAsync(this Task task)
+        public static void UnhandledAsync(this Task _)
         {
             
         }
