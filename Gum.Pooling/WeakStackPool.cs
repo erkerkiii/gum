@@ -43,7 +43,7 @@ namespace Gum.Pooling
             }
         }
 
-        public void Put(T poolable)
+        private void Put(IPoolable poolable)
         {
             _objectPool.Push(poolable);
         }
@@ -72,6 +72,8 @@ namespace Gum.Pooling
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            instance.OnReturnToPoolRequested += Put;
 
             return instance;
         }

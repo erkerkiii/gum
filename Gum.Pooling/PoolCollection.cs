@@ -2,33 +2,33 @@
 
 namespace Gum.Pooling
 {
-    public sealed class PoolCollection<T> where T : IPoolable
+    public sealed class PoolCollection<TKey, TValue> where TValue : IPoolable
     {
-        private readonly Dictionary<int, IPool<T>> _poolDictionary;
+        private readonly Dictionary<TKey, IPool<TValue>> _poolDictionary;
 
-        private readonly PoolBuilder<T> _poolBuilder;
+        private readonly PoolBuilder<TValue> _poolBuilder;
 
-        public PoolCollection(PoolBuilder<T> poolBuilder)
+        public PoolCollection(PoolBuilder<TValue> poolBuilder)
         {
-            _poolDictionary = new Dictionary<int, IPool<T>>();
+            _poolDictionary = new Dictionary<TKey, IPool<TValue>>();
             _poolBuilder = poolBuilder;
         }
 
-        public T Get(int key, object[] args = null)
+        public TValue Get(TKey key, object[] args = null)
         {
             EnsureExistence(key);
             
             return _poolDictionary[key].Get(args);
         }
 
-        private void EnsureExistence(int key)
+        private void EnsureExistence(TKey key)
         {
             if (_poolDictionary.ContainsKey(key))
             {
                 return;
             }
 
-            IPool<T> pool = _poolBuilder.Build();
+            IPool<TValue> pool = _poolBuilder.Build();
             _poolDictionary.Add(key, pool);
         }
     }
