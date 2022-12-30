@@ -6,7 +6,7 @@ namespace Tests.PoolingTests
     [TestFixture]
     public class PoolCollectionTests
     {
-        private PoolCollection<MockPoolable> _poolCollection;
+        private PoolCollection<int, MockPoolable> _poolCollection;
 
         [SetUp]
         public void SetUp()
@@ -16,7 +16,7 @@ namespace Tests.PoolingTests
                 .FromPoolableInstanceProvider(new MockInstanceProvider())
                 .SetPoolType(PoolType.Stack);
 
-            _poolCollection = new PoolCollection<MockPoolable>(poolBuilder);
+            _poolCollection = new PoolCollection<int, MockPoolable>(poolBuilder);
         }
 
         [Test]

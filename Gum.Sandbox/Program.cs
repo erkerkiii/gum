@@ -1,133 +1,50 @@
-﻿using System;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Gum.WebRequest;
-using LZ4;
+﻿using System.IO;
+using System.Text;
 
 namespace Gum.Sandbox
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            unsafe
-            {
-                LevelPack20 levelPack20 = new LevelPack20();
-                fixed (Level* level = &levelPack20[0])
-                {
-                    for (int index = 0; index < 10; index++)
-                    {
-                        Console.WriteLine($"{index} ///////////////////////////////////////////////////");
-                        using MemoryStream memoryStream = new MemoryStream();
-                        binaryFormatter.Serialize(memoryStream, JsonSerializer.Serialize(level[index]));
-                        Console.WriteLine(LZ4Codec.Encode(memoryStream.ToArray(), 0, (int)memoryStream.Length).Length);
-                    }
-                }
-            }
-        }
-    }
+	class Program
+	{
+		private const string TYPE = "TYPE";
+		private const string ARG = "ARGS";
+		private const string ARGS_IMPL = "ARGS_IMPL";
 
-    [StructLayout(LayoutKind.Sequential)]
-    [Serializable]
-    public struct LevelPack20
-    {
-        public Level l1;
-        public Level l2;
-        public Level l3;
-        public Level l4;
-        public Level l5;
-        public Level l6;
-        public Level l7;
-        public Level l8;
-        public Level l9;
-        public Level l10;
-        
-        public ref Level this[int index] {
-            get
-            {
-                unsafe
-                {
-                    fixed (Level* level = &l1)
-                    {
-                        return ref level[index];
-                    }
-                }
-            }
-        }
-    }
+		static void Main(string[] args)
+		{
+			const string path = @"C:\Users\Nihan\RiderProjects\gum\Gum.Pooling\StackPool.cs";
+			string pool = File.ReadAllText(@"C:\Users\Nihan\RiderProjects\gum\Gum.Pooling\tmplt.txt");
+			StringBuilder pathString = new StringBuilder(File.ReadAllText(path));
+			StringBuilder stringBuilder = new StringBuilder();
+			for (int i = 0; i < 16; i++)
+			{
+				if (i == 0)
+				{
+					stringBuilder.Append(pool.Replace(TYPE, "").Replace(ARGS_IMPL, "").Replace(ARG, ""));
+					continue;
+				}
 
-    [System.Serializable]
-    public struct Level
-    {
-        public int id;
-        public int name;
-        public int moves;
-        public int is_tutorial;
+				string arg = string.Empty;
+				string argImpl = string.Empty;
+				string type = string.Empty;
+				for (int j = 0; j < i; j++)
+				{
+					var t = $"T{j + 1}";
+					if (j > 0)
+					{
+						arg += ", ";
+						type += ", ";
+						argImpl += ", ";
+					}
 
-        public double level_bar;
-    }
+					type += $"{t}";
+					arg += $"{t} arg{j}";
+					argImpl += $"arg{j}";
+				}
 
-    [Serializable]
-    public struct LevelObject
-    {
-        public byte category_id;
+				stringBuilder.Append(pool.Replace(TYPE, type).Replace(ARGS_IMPL, argImpl).Replace(ARG, arg));
+			}
 
-        public int challenge_id;
-        public int count;
-        public int status;
-        public int object_id;
-        public int is_jelly;
-        public int is_bottom;
-        public int is_chained;
-
-        public float width;
-        public float height;
-        public float obj_width;
-
-        public float obj_degree;
-    }
-
-    [Serializable]
-    public struct MissionDTO
-    {
-        public byte mission_type_id;
-
-        public int mission_type_module_id;
-        public int mission_value;
-    }
-    
-    [System.Serializable]
-    public struct HelperConfiguration
-    {
-        public int move;
-        public int value;
-        public int count;
-    }
-    
-    [System.Serializable]
-    public struct HelperDTO
-    {
-        public int helper_id;
-
-        public HelperConfiguration[] configures;
-    }
-
-    [Serializable]
-    public struct Matchable
-    {
-        public int id;
-
-        public bool isJelly;
-    }
-
-    [System.Serializable]
-    public struct Section
-    {
-        public LevelObject[] data;
-    }
+			File.WriteAllText(path, stringBuilder.ToString());
+		}
+	}
 }
