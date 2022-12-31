@@ -1,6 +1,6 @@
 ﻿namespace Gum.Pooling
 {
-    internal enum ProviderType
+    internal enum ProviderType : byte
     {
         Undefined,
         FromPoolableInstanceProvider,

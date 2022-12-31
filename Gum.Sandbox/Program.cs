@@ -1,50 +1,26 @@
-﻿using System.IO;
-using System.Text;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Gum.Composition.CodeGen;
 
 namespace Gum.Sandbox
 {
 	class Program
 	{
-		private const string TYPE = "TYPE";
-		private const string ARG = "ARGS";
-		private const string ARGS_IMPL = "ARGS_IMPL";
-
+		private  static bool isCompleted;
+		
 		static void Main(string[] args)
 		{
-			const string path = @"C:\Users\Nihan\RiderProjects\gum\Gum.Pooling\StackPool.cs";
-			string pool = File.ReadAllText(@"C:\Users\Nihan\RiderProjects\gum\Gum.Pooling\tmplt.txt");
-			StringBuilder pathString = new StringBuilder(File.ReadAllText(path));
-			StringBuilder stringBuilder = new StringBuilder();
-			for (int i = 0; i < 16; i++)
+			StartAsync();
+			while (!isCompleted)
 			{
-				if (i == 0)
-				{
-					stringBuilder.Append(pool.Replace(TYPE, "").Replace(ARGS_IMPL, "").Replace(ARG, ""));
-					continue;
-				}
-
-				string arg = string.Empty;
-				string argImpl = string.Empty;
-				string type = string.Empty;
-				for (int j = 0; j < i; j++)
-				{
-					var t = $"T{j + 1}";
-					if (j > 0)
-					{
-						arg += ", ";
-						type += ", ";
-						argImpl += ", ";
-					}
-
-					type += $"{t}";
-					arg += $"{t} arg{j}";
-					argImpl += $"arg{j}";
-				}
-
-				stringBuilder.Append(pool.Replace(TYPE, type).Replace(ARGS_IMPL, argImpl).Replace(ARG, arg));
+				Thread.Sleep(10);
 			}
+		}
 
-			File.WriteAllText(path, stringBuilder.ToString());
+		private static async Task StartAsync()
+		{
+			await CompositionCodeGenerator.RunAsync();
+			isCompleted = true;
 		}
 	}
 }

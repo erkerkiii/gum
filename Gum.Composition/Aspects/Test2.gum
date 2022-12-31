@@ -1,0 +1,6 @@
+﻿aspect Test2
+{
+    long MyLong;
+    short MyShort;
+    bool MyBool;
+}

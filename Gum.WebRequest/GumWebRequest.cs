@@ -165,7 +165,7 @@ namespace Gum.WebRequest
             public Status Status { get; internal set; } = Status.None;
         }
 
-        public enum Status
+        public enum Status : byte
         {
             None,
             OnGoing,

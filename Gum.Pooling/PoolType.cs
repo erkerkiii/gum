@@ -1,6 +1,6 @@
 ﻿namespace Gum.Pooling
 {
-    public enum PoolType
+    public enum PoolType : byte
     {
         Stack,
         WeakStack
