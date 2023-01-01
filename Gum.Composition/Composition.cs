@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Gum.Composition.Exception;
 using Gum.Composition.Generated;
+using Gum.Composition.Internal;
 using Gum.Pooling.Collections;
 
 namespace Gum.Composition
@@ -11,6 +12,10 @@ namespace Gum.Composition
 		private readonly PooledDictionary<AspectType, IAspect> _aspectLookUp;
 
 		public IAspect this[AspectType aspectType] => _aspectLookUp[aspectType];
+
+		public int AspectCount => IsValid
+			? _aspectLookUp.Count
+			: 0;
 
 		public readonly bool IsValid;
 
@@ -35,15 +40,7 @@ namespace Gum.Composition
 		{
 			SanityCheck();
 			
-			foreach (KeyValuePair<AspectType, IAspect> keyValuePair in _aspectLookUp)
-			{
-				if (keyValuePair.Value is TAspect value)
-				{
-					return value;
-				}
-			}
-
-			return default;
+			return (TAspect) _aspectLookUp[AspectDatabase.GetAspectTypeOfType(typeof(TAspect))];
 		}
 
 		public void AddAspect<TAspect>(TAspect aspect) where TAspect : IAspect
@@ -69,6 +66,17 @@ namespace Gum.Composition
 			}
 			
 			_aspectLookUp[aspect.Type] = aspect;
+		}
+
+		public bool RemoveAspect(AspectType aspectType)
+		{
+			if (!HasAspect(aspectType))
+			{
+				return false;
+			}
+
+			_aspectLookUp.Remove(aspectType);
+			return true;
 		}
 
 		public bool HasAspect(AspectType aspectType)

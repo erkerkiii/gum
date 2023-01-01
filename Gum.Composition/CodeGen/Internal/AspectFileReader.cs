@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Gum.Composition.CodeGen.Config;
 
@@ -11,7 +14,7 @@ namespace Gum.Composition.CodeGen.Internal
 
 		public static async Task<IEnumerable<AspectPrototype>> ReadAspectsAsync()
 		{
-			string[] files = Directory.GetFiles(Gum.Composition.UserConfig.ASPECTS_DIRECTORY_PATH, SEARCH_PATTERN, SearchOption.AllDirectories);
+			string[] files = Directory.GetFiles(UserConfig.ASPECTS_DIRECTORY_PATH, SEARCH_PATTERN, SearchOption.AllDirectories);
 			List<AspectPrototype> aspectPrototypes = new List<AspectPrototype>();
 			for (int index = 0; index < files.Length; index++)
 			{
@@ -27,6 +30,7 @@ namespace Gum.Composition.CodeGen.Internal
 
 		private static bool ResolveText(string text, out AspectPrototype aspectPrototype)
 		{
+			Assembly[] assemblies = Thread.GetDomain().GetAssemblies();
 			aspectPrototype = default;
 			if (!text.StartsWith(Keywords.ASPECT_FILE))
 			{

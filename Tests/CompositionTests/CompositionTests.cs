@@ -45,9 +45,11 @@ namespace Tests.CompositionTests
 			using Composition composition = Composition.Create();
 
 			Assert.IsFalse(composition.HasAspect(BarAspect.ASPECT_TYPE));
-			
+			Assert.AreEqual(0, composition.AspectCount);
+
 			composition.AddAspect(new BarAspect(VALUE));
 			Assert.IsTrue(composition.HasAspect(BarAspect.ASPECT_TYPE));
+			Assert.AreEqual(1, composition.AspectCount);
 		}
 
 		[Test]
@@ -71,6 +73,19 @@ namespace Tests.CompositionTests
 			const int newValue = 10;
 			composition.SetAspect(new BarAspect(newValue));
 			Assert.AreEqual(newValue, composition.GetAspect<BarAspect>().MyInt);
+			Assert.AreEqual(1, composition.AspectCount);
+		}
+		
+		[Test]
+		public void Remove_Aspect()
+		{
+			using Composition composition = Composition.Create(new IAspect[] { new BarAspect() });
+			Assert.IsTrue(composition.HasAspect(BarAspect.ASPECT_TYPE));
+			Assert.AreEqual(1, composition.AspectCount);
+
+			composition.RemoveAspect(BarAspect.ASPECT_TYPE);
+			Assert.IsFalse(composition.HasAspect(BarAspect.ASPECT_TYPE));
+			Assert.AreEqual(0, composition.AspectCount);
 		}
 		
 		[Test]
