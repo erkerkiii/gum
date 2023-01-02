@@ -1,4 +1,4 @@
-﻿using Gum.Composition;
+﻿using Gum.Composer;
 
 namespace Tests.CompositionTests
 {

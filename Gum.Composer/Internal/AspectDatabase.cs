@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Gum.Composition.Generated;
+using Gum.Composer.Generated;
 using Gum.Core.Utility;
 
-namespace Gum.Composition.Internal
+namespace Gum.Composer.Internal
 {
 	internal static class AspectDatabase
 	{

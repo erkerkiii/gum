@@ -1,6 +1,6 @@
-﻿using Gum.Composition.Generated;
+﻿using Gum.Composer.Generated;
 
-namespace Gum.Composition
+namespace Gum.Composer
 {
 	public interface IAspect
 	{

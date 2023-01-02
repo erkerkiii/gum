@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Gum.Composition.CodeGen
+namespace Gum.Composer.CodeGen
 {
 	public readonly struct AspectPrototype
 	{

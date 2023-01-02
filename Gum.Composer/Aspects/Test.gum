@@ -1,0 +1,4 @@
+﻿aspect Score  
+{
+    int Score;
+}

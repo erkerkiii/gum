@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Gum.Composition.CodeGen.Internal;
+using Gum.Composer.CodeGen.Internal;
 
-namespace Gum.Composition.CodeGen
+namespace Gum.Composer.CodeGen
 {
 	public static class CompositionCodeGenerator
 	{

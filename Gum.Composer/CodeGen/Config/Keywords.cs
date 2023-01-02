@@ -1,4 +1,4 @@
-﻿namespace Gum.Composition.CodeGen.Config
+﻿namespace Gum.Composer.CodeGen.Config
 {
 	internal static class Keywords
 	{

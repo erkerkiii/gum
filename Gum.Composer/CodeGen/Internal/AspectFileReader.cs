@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Gum.Composition.CodeGen.Config;
+using Gum.Composer.CodeGen.Config;
 
-namespace Gum.Composition.CodeGen.Internal
+namespace Gum.Composer.CodeGen.Internal
 {
 	internal static class AspectFileReader
 	{

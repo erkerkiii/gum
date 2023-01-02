@@ -71,7 +71,8 @@ namespace Gum.WebRequest
                 downloadHandle.Error = $"Failed with code: {responseMessage.StatusCode}";
                 downloadHandle.Status = Status.Fail;
                 downloadHandle.IsDone = true;
-                return null;
+                
+                return new Response((int)responseMessage.StatusCode, Array.Empty<byte>());
             }
 
             long? contentLength = responseMessage.Content.Headers.ContentLength;

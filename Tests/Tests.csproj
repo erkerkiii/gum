@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Gum.Composition\Gum.Composition.csproj" />
+      <ProjectReference Include="..\Gum.Composer\Gum.Composer.csproj" />
       <ProjectReference Include="..\Gum.Core\Gum.Core.csproj" />
       <ProjectReference Include="..\Gum.Pooling\Gum.Pooling.csproj" />
     </ItemGroup>

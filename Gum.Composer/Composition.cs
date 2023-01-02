@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using Gum.Composition.Exception;
-using Gum.Composition.Generated;
-using Gum.Composition.Internal;
+using Gum.Composer.Exception;
+using Gum.Composer.Generated;
+using Gum.Composer.Internal;
 using Gum.Pooling.Collections;
 
-namespace Gum.Composition
+namespace Gum.Composer
 {
 	public readonly struct Composition : IDisposable
 	{
@@ -43,6 +42,28 @@ namespace Gum.Composition
 			return (TAspect) _aspectLookUp[AspectDatabase.GetAspectTypeOfType(typeof(TAspect))];
 		}
 
+		public bool TryGetAspect<TAspect>(out TAspect aspect) where TAspect : IAspect
+		{
+			SanityCheck();
+
+			aspect = default;
+
+			if (!HasAspect(AspectDatabase.GetAspectTypeOfType(typeof(TAspect))))
+			{
+				return false;
+			}
+			
+			aspect = (TAspect)_aspectLookUp[AspectDatabase.GetAspectTypeOfType(typeof(TAspect))];
+			return true;
+		}
+
+		public readonly Composition GetAspectFluent<TAspect>(out TAspect aspect)
+		{
+			SanityCheck();
+			aspect = (TAspect)_aspectLookUp[AspectDatabase.GetAspectTypeOfType(typeof(TAspect))];
+			return this;
+		}
+		
 		public void AddAspect<TAspect>(TAspect aspect) where TAspect : IAspect
 		{
 			SanityCheck();

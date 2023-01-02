@@ -1,4 +1,4 @@
-﻿namespace Gum.Composition.Exception
+﻿namespace Gum.Composer.Exception
 {
 	public class InvalidCompositionException : System.Exception
 	{

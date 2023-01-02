@@ -1,6 +1,0 @@
-﻿aspect Test
-{
-    int intValue;
-    
-    string stringValue;
-}

@@ -1,4 +1,4 @@
-﻿namespace Gum.Composition
+﻿namespace Gum.Composer
 {
 	public interface IComposable
 	{

@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gum.WebRequest", "Gum.WebRe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gum.Sandbox", "Gum.Sandbox\Gum.Sandbox.csproj", "{26F8D6E4-9B50-4D94-86F3-94E7029E95C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gum.Composition", "Gum.Composition\Gum.Composition.csproj", "{D9F81A6C-D0DD-4289-9D7D-515E4B7A7AFC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gum.Composer", "Gum.Composer\Gum.Composer.csproj", "{D9F81A6C-D0DD-4289-9D7D-515E4B7A7AFC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,4 @@
+﻿aspect Name
+{
+    string Name;
+}

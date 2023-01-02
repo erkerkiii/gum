@@ -1,7 +1,8 @@
-﻿using Gum.Composition;
-using Gum.Composition.Exception;
-using Gum.Composition.Generated;
+﻿using Gum.Composer;
+using Gum.Composer.Exception;
+using Gum.Composer.Generated;
 using NUnit.Framework;
+using Tests.PoolingTests;
 
 namespace Tests.CompositionTests
 {
@@ -24,6 +25,30 @@ namespace Tests.CompositionTests
 			BarAspect barAspect = _composition.GetAspect<BarAspect>();
 			Assert.AreEqual(VALUE, barAspect.MyInt);
 		}
+		
+		[Test]
+		public void Try_Get_Aspect()
+		{
+			Assert.IsTrue(_composition.TryGetAspect(out BarAspect barAspect));
+			Assert.AreEqual(VALUE, barAspect.MyInt);
+			Assert.IsFalse(_composition.TryGetAspect(out FooAspect _));
+		}
+		
+		[Test]
+		public void Get_Aspect_Fluent()
+		{
+			using Composition composition =
+				Composition.Create(new IAspect[] { new BarAspect(VALUE), new FooAspect(VALUE) });
+
+			composition
+				.GetAspectFluent(out FooAspect fooAspect)
+				.GetAspectFluent(out BarAspect barAspect);
+			
+			Assert.AreEqual(VALUE, barAspect.MyInt);
+			Assert.AreEqual(VALUE, fooAspect.MyInt);
+		}
+
+
 
 		[Test]
 		public void Get_Aspect_With_Indexer()
@@ -36,7 +61,7 @@ namespace Tests.CompositionTests
 		public void Has_Aspect()
 		{
 			Assert.IsTrue(_composition.HasAspect(BarAspect.ASPECT_TYPE));
-			Assert.IsFalse(_composition.HasAspect((AspectType)1));
+			Assert.IsFalse(_composition.HasAspect(FooAspect.ASPECT_TYPE));
 		}
 
 		[Test]
