@@ -61,7 +61,7 @@ namespace Gum.Composer
 			return true;
 		}
 
-		public readonly Composition GetAspectFluent<TAspect>(out TAspect aspect)
+		public Composition GetAspectFluent<TAspect>(out TAspect aspect)
 		{
 			SanityCheck();
 			aspect = (TAspect)_aspectLookUp[AspectDatabase.GetAspectTypeOfType(typeof(TAspect))];
