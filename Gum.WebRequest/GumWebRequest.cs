@@ -83,13 +83,11 @@ namespace Gum.WebRequest
             
                 if (!responseMessage.IsSuccessStatusCode)
                 {
-                    byte[] emptyBytes = Array.Empty<byte>();
-                
                     downloadHandle.Error = $"Failed with code: {responseMessage.StatusCode}";
                     downloadHandle.Status = Status.Fail;
                     downloadHandle.IsDone = true;
                 
-                    return new Response((int)responseMessage.StatusCode, emptyBytes);
+                    return new Response((int)responseMessage.StatusCode, Array.Empty<byte>());
                 }
 
                 long? contentLength = responseMessage.Content.Headers.ContentLength;
