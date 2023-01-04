@@ -48,8 +48,7 @@ namespace Tests.CompositionTests
 			Assert.AreEqual(VALUE, fooAspect.MyInt);
 		}
 
-
-
+		
 		[Test]
 		public void Get_Aspect_With_Indexer()
 		{
@@ -123,6 +122,18 @@ namespace Tests.CompositionTests
 			});
 
 			Assert.Catch(composition.Dispose);
+		}
+		
+		[Test]
+		public void Enumerator()
+		{
+			using Composition composition = Composition.Create(new IAspect[] {new BarAspect(), new FooAspect()});
+			foreach (IAspect aspect in composition)
+			{
+				Assert.IsTrue(aspect is BarAspect || aspect is FooAspect);
+			}
+
+			Assert.Pass();
 		}
 
 		[TearDown]

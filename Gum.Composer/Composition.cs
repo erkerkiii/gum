@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using Gum.Composer.Exception;
 using Gum.Composer.Generated;
 using Gum.Composer.Internal;
@@ -118,6 +122,54 @@ namespace Gum.Composer
 		public void Dispose()
 		{
 			_aspectLookUp.Dispose();
+		}
+		
+		public Enumerator GetEnumerator()
+		{
+			return new Enumerator(this);
+		}
+		
+		public struct Enumerator : IEnumerator<IAspect>
+		{
+			public IAspect Current
+			{
+				[MethodImpl(MethodImplOptions.AggressiveInlining)]
+				get => _source[_index - 1];
+			}
+
+			object IEnumerator.Current
+			{
+				[MethodImpl(MethodImplOptions.AggressiveInlining)]
+				get => Current;
+			}
+
+			private int _index;
+
+			private readonly int _count;
+
+			private readonly IAspect[] _source;
+
+			public Enumerator(Composition composition)
+			{
+				_source = composition._aspectLookUp.Values.ToArray();
+				_index = 0;
+				_count = _source.Length;
+			}
+
+			public bool MoveNext()
+			{
+				return _index++ < _count;
+			}
+
+			public void Reset()
+			{
+				_index = 0;
+			}
+
+			public void Dispose()
+			{
+				_index = 0;
+			}
 		}
 	}
 }
