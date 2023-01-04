@@ -1,13 +1,13 @@
 ﻿using Gum.Core.DataStructures;
 using NUnit.Framework;
 
-namespace Tests.PoolingTests
+namespace Tests.DataStructureTests
 {
     [TestFixture]
     public class WeakStackTests
     {
         [Test]
-        public void WeakStack_Push()
+        public void Push()
         {
             WeakStack<Foo> weakStack = new WeakStack<Foo>();
 
@@ -20,7 +20,7 @@ namespace Tests.PoolingTests
         }
 
         [Test]
-        public void WeakStack_Pop()
+        public void Pop()
         {
             WeakStack<Foo> weakStack = new WeakStack<Foo>();
             
