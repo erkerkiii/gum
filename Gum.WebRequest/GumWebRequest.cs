@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -17,7 +18,7 @@ namespace Gum.WebRequest
 
         private readonly HttpRequestMessage _httpRequestMessage;
         
-        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource _timeoutTokenSource;
         
         public DownloadHandle downloadHandle { get; }
         
@@ -58,63 +59,97 @@ namespace Gum.WebRequest
             return new GumWebRequest(httpRequestMessage);
         }
 
-        public async Task<Response> SendAsync()
+        public async Task<Response> SendAsync(CancellationToken rCancellationToken = default, TimeSpan timeoutSpan = default)
         {
-            _cancellationTokenSource = new CancellationTokenSource();
-            HttpResponseMessage responseMessage =
-                await HttpClient.SendAsync(_httpRequestMessage, _cancellationTokenSource.Token);
-            
-            downloadHandle.Status = Status.OnGoing;
-
-            if (!responseMessage.IsSuccessStatusCode)
+            if (timeoutSpan == default)
             {
-                downloadHandle.Error = $"Failed with code: {responseMessage.StatusCode}";
-                downloadHandle.Status = Status.Fail;
-                downloadHandle.IsDone = true;
-                
-                return new Response((int)responseMessage.StatusCode, Array.Empty<byte>());
+                timeoutSpan = HttpClient.Timeout;
             }
 
-            long? contentLength = responseMessage.Content.Headers.ContentLength;
-            if (contentLength.HasValue)
-            {
-                downloadHandle.TotalBytesToReceive = contentLength.Value;
-            }
+            _timeoutTokenSource = new CancellationTokenSource(timeoutSpan);
             
-            byte[] buffer = new byte[BUFFER_SIZE];
-            List<byte> bytes = new List<byte>();
-            using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+            CancellationToken timeOutCancellationToken = _timeoutTokenSource.Token;
+            CancellationToken cancellationToken = timeOutCancellationToken;
+            if (rCancellationToken != default)
             {
-                int bytesRead;
-                while ((bytesRead = await responseStream
-                           .ReadAsync(buffer, 0, BUFFER_SIZE, _cancellationTokenSource.Token)
-                           .ConfigureAwait(false)) > 0)
+                cancellationToken = CancellationTokenSource.CreateLinkedTokenSource(timeOutCancellationToken, rCancellationToken).Token;
+            }
+
+            try
+            {
+                HttpResponseMessage responseMessage = await HttpClient.SendAsync(_httpRequestMessage, cancellationToken);
+                            
+                downloadHandle.Status = Status.OnGoing;
+            
+                if (!responseMessage.IsSuccessStatusCode)
                 {
-                    bytes.AddRange(buffer.Take(bytesRead));
-                    downloadHandle.BytesReceived += bytesRead;
-                    
-                    if (downloadHandle.TotalBytesToReceive > 0)
+                    byte[] emptyBytes = Array.Empty<byte>();
+                
+                    downloadHandle.Error = $"Failed with code: {responseMessage.StatusCode}";
+                    downloadHandle.Status = Status.Fail;
+                    downloadHandle.IsDone = true;
+                
+                    return new Response((int)responseMessage.StatusCode, emptyBytes);
+                }
+
+                long? contentLength = responseMessage.Content.Headers.ContentLength;
+                if (contentLength.HasValue)
+                {
+                    downloadHandle.TotalBytesToReceive = contentLength.Value;
+                }
+            
+                byte[] buffer = new byte[BUFFER_SIZE];
+                List<byte> bytes = new List<byte>();
+                using (Stream responseStream = await responseMessage.Content.ReadAsStreamAsync())
+                {
+                    int bytesRead;
+                    while ((bytesRead = await responseStream
+                               .ReadAsync(buffer, 0, BUFFER_SIZE, cancellationToken)
+                               .ConfigureAwait(false)) > 0)
                     {
-                        downloadHandle.Progress = (float)downloadHandle.BytesReceived / (float)downloadHandle.TotalBytesToReceive;
+                        bytes.AddRange(buffer.Take(bytesRead));
+                        downloadHandle.BytesReceived += bytesRead;
+                    
+                        if (downloadHandle.TotalBytesToReceive > 0)
+                        {
+                            downloadHandle.Progress = (float)downloadHandle.BytesReceived / (float)downloadHandle.TotalBytesToReceive;
+                        }
                     }
                 }
-            }
             
-            downloadHandle.Status = Status.Success;
-            downloadHandle.Result = new Response((int)responseMessage.StatusCode, bytes.ToArray());
-            downloadHandle.IsDone = true;
-            return downloadHandle.Result;
+                downloadHandle.Status = Status.Success;
+                downloadHandle.Result = new Response((int)responseMessage.StatusCode, bytes.ToArray());
+                downloadHandle.IsDone = true;
+                return downloadHandle.Result;
+            }
+            catch (Exception exception)
+            {
+                const int notImplementedStatusCode = 501;
+                const int timeOutResponseCode = 408;
+
+                if (timeOutCancellationToken.IsCancellationRequested)
+                {
+                    return new Response(timeOutResponseCode, Array.Empty<byte>());
+                }
+
+                if (!(exception is WebException webException) || !(webException.Response is HttpWebResponse httpWebResponse))
+                {
+                    return new Response(notImplementedStatusCode, Array.Empty<byte>());
+                }
+
+                return new Response((int)httpWebResponse.StatusCode, Array.Empty<byte>());
+            }
         }
 
         public void Cancel()
         {
-            _cancellationTokenSource?.Cancel();
+            _timeoutTokenSource?.Cancel();
         }
 
         public void Dispose()
         {
             _httpRequestMessage?.Dispose();
-            _cancellationTokenSource?.Dispose();
+            _timeoutTokenSource?.Dispose();
         }
         
         public sealed class Response : IDisposable
