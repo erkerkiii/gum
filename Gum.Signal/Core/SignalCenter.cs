@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Gum.Signal.Core
 {
-	public class SignalCenter
+	public sealed class SignalCenter
 	{
 		private readonly object _lock = new object();
 
