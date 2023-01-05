@@ -4,7 +4,6 @@ Gum is a collection of tools focusing mainly on game development with the goal o
 
 
 ## Pooling
-<summary>Pooling</summary>
 This is a very basic implementation of the pooling system.
 ```CSharp
 PoolBuilder<Foo> poolBuilder = new PoolBuilder<Foo>();
