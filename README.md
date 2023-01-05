@@ -130,10 +130,10 @@ aspect MyAspect
 You can use ANY object type while creating aspects.
 
 ```CSharp
-private async Task RunAsync()
+private void Run()
 {
     //you can call this method from anywhere (from unity editor or a console application)
-    await CompositionCodeGenerator.Run(); 
+    CompositionCodeGenerator.Run(); 
 }
 ```
 
