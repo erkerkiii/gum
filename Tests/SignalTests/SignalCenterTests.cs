@@ -22,7 +22,7 @@ namespace Tests.SignalTests
 		{
 			void Action(FooSignal _) { }
 
-			_signalCenter.Subscribe((Action<FooSignal>)Action);
+			_signalCenter.Subscribe<FooSignal>(Action);
 			Assert.IsTrue(_signalCenter.Exists<FooSignal>(Action));
 		}
 		
@@ -31,7 +31,7 @@ namespace Tests.SignalTests
 		{
 			void Action(FooSignal _) { }
 
-			_signalCenter.Subscribe((Action<FooSignal>)Action);
+			_signalCenter.Subscribe<FooSignal>(Action);
 			Assert.IsTrue(_signalCenter.Exists<FooSignal>(Action));
 			_signalCenter.Unsubscribe((Action<FooSignal>)Action);
 			Assert.IsFalse(_signalCenter.Exists<FooSignal>(Action));

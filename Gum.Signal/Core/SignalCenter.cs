@@ -9,7 +9,7 @@ namespace Gum.Signal.Core
 		private readonly object _lock = new object();
 
 		private readonly List<Entry> _entries = new List<Entry>();
-		
+
 		public void Subscribe<T>(Action<T> action)
 		{
 			lock (_lock)
@@ -32,12 +32,12 @@ namespace Gum.Signal.Core
 		
 		public void Fire<T>(T signal)
 		{
-			Type type = typeof(T);
+			int hashCode = typeof(T).GetHashCode();
 			lock (_lock)
 			{
 				for (int index = 0; index < _entries.Count; index++)
 				{
-					if (_entries[index].Type == type)
+					if (_entries[index].TypeHashCode == hashCode)
 					{
 						((Action<T>)_entries[index].Delegate).Invoke(signal);
 					}
@@ -65,17 +65,17 @@ namespace Gum.Signal.Core
 		{
 			public readonly Delegate Delegate;
 
-			public readonly Type Type;
+			public readonly int TypeHashCode;
 
 			public Entry(Delegate @delegate, Type type)
 			{
 				Delegate = @delegate;
-				Type = type;
+				TypeHashCode = type.GetHashCode();
 			}
 
 			public bool Equals(Entry other)
 			{
-				return Equals(Delegate, other.Delegate) && Type == other.Type;
+				return Equals(Delegate, other.Delegate) && TypeHashCode == other.TypeHashCode;
 			}
 
 			public override bool Equals(object obj)
@@ -85,7 +85,7 @@ namespace Gum.Signal.Core
 
 			public override int GetHashCode()
 			{
-				return HashCode.Combine(Delegate, Type);
+				return HashCode.Combine(Delegate, TypeHashCode);
 			}
 		}
 	}

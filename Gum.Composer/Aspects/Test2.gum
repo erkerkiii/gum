@@ -1,4 +1,0 @@
-﻿aspect Id
-{
-    int Id;
-}

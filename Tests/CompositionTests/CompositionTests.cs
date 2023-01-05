@@ -1,8 +1,6 @@
 ﻿using Gum.Composer;
 using Gum.Composer.Exception;
-using Gum.Composer.Generated;
 using NUnit.Framework;
-using Tests.PoolingTests;
 
 namespace Tests.CompositionTests
 {

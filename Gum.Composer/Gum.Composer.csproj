@@ -9,4 +9,8 @@
       <ProjectReference Include="..\Gum.Pooling\Gum.Pooling.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Aspects" />
+    </ItemGroup>
+
 </Project>

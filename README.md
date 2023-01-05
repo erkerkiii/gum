@@ -1,14 +1,14 @@
 # Gum
 
-Gum is planned to be a collection of tools/APIs focusing mainly on game development.
+Gum is a collection of tools focusing mainly on game development with the goal of getting rid of the boilerplate code.
 
 
 ## Pooling
-
+<summary>Pooling</summary>
 This is a very basic implementation of the pooling system.
 ```CSharp
 PoolBuilder<Foo> poolBuilder = new PoolBuilder<Foo>();
-IPool<Foo> pool = _poolBuilder
+IPool<> pool = _poolBuilder
                 .SetPoolType(PoolType.Stack) //this is the default pool type
                 .FromPoolableInstanceProvider(new FooInstanceProvider())
                 .WithInitialSize(10) //this is 0 by default
@@ -27,10 +27,54 @@ Pool usage
 ```CSharp
 Foo foo = pool.Get(); //gets an object from the pool, if it doesn't exists it creates one
 
-pool.Put(foo); //puts the object back in the pool
+public class Foo : IPoolable
+{
+    public event Action<IPoolable> OnReturnToPoolRequested;
+
+    public Reset()
+    {
+        //reset object's values   
+    }
+
+    public void Erase()
+    {
+        //delete the object
+        GC.SuppressFinalize(this);
+    }
+}
 ```
 
-PoolCollection usage
+Pool usage with Unity's MonoBehaviour
+
+```CSharp
+public class Foo : MonoBehaviour, IPoolable
+{
+    public event Action<IPoolable> OnReturnToPoolRequested;
+
+    public Reset()
+    {
+        gameObject.SetActive(true);  
+    }
+    
+    public void ReturnToPool()
+    {
+        gameObject.SetActive(false);
+        OnReturnToPoolRequested.Invoke(this);      
+    }
+
+    public void Erase()
+    {
+        if(this == null) //to avoid race conditions with Unity's object life-time
+        {
+            return;
+        }
+    
+        Destroy(gameObject);
+    }
+}
+```
+
+PoolCollection<TKey, TValue> usage
 ```CSharp
 PoolBuilder<Foo> poolBuilder = new PoolBuilder<Foo>();
 //configuring the builder
@@ -38,11 +82,112 @@ poolBuilder
           .FromPoolableInstanceProvider(new FooInstanceProvider())
           .SetPoolType(PoolType.Stack);
 
-PoolCollection<Foo> poolCollection = new PoolCollection<Foo>(poolBuilder);
+PoolCollection<int, Foo> poolCollection = new PoolCollection<int, Foo>(poolBuilder);
 
 int key = 0;
 
 Foo foo = _poolCollection.Get(key); //gets an object from the pool with the specific key, creates one if the pool is empty
+```
 
-poolCollection.Put(key, foo); //puts the object back in the pool with the specific key
+## Composer
+<p>Composer allows you to work with data compositions instead of inheritance thus allowing you to create data agnostic systems and cleaner, decoupled code.</p>
+<p>In order to work with the Composer, you have to use the aspect system.</p>
+
+1. Go to ```Gum.Composer\Aspects```
+2. Create a file with extension ".gum"
+3. Start typing your aspect
+4. Run the codegen using ```CompositionCodeGenerator.RunAsync```
+
+Example aspect file
+```
+aspect MyAspect 
+{
+    int MyInt;
+    
+    string MyAspect;
+    
+    double MyDouble;
+    
+    Transform MyTransform;
+    
+    Vector3 MyVector3;
+}
+```
+You can use ANY object type while creating aspects.
+
+```CSharp
+private async Task RunAsync()
+{
+    //you can call this method from anywhere (from unity editor or a console application)
+    await CompositionCodeGenerator.RunAsync(); 
+}
+```
+
+You can use the ```Gum.Composer\UserConfig.cs``` to configure the codegen.
+
+```CSharp
+public struct Foo : IComposable
+{
+    public int foo;
+    
+    public string bar;
+    
+    public Vector3 baz;
+
+    public Composition GetComposition()
+    {
+        return Composition.Create(new IAspect[]
+        {
+            new FooAspect(foo),
+            new BarAspect(bar),
+            new BazAspect(baz)
+        });
+    }
+}
+
+public class Bar : IComposable
+{
+    public double Qux;
+    
+    public string bar;
+    
+    public Composition GetComposition()
+    {
+        return Composition.Create(new IAspect[]
+        {
+            new QuxAspect(foo),
+            new BarAspect(bar),
+        });
+    }
+}
+
+//as you can see this method can use both Foo and and Bar to operate
+public void UseAspects(IComposable composable)
+{
+    //always use the disposable pattern or manually dispose composition
+    using (Composition composition = composable.GetComposition())
+    {
+        BarAspect barAspect = _composition.GetAspect<BarAspect>();				
+    }
+}
+```
+
+Other usages
+```CSharp
+composition
+    .GetAspectFluent(out FooAspect fooAspect)
+	.GetAspectFluent(out BarAspect barAspect);
+	
+BarAspect barAspect = (BarAspect)_composition[BarAspect.ASPECT_TYPE];
+
+composition.AddAspect(new BarAspect());
+
+composition.SetAspect(new BarAspect());
+
+composition.RemoveAspect(BarAspect.ASPECT_TYPE);
+
+foreach (IAspect aspect in composition)
+{
+    BarAspect barAspect = (BarAspect)aspect;
+}
 ```
