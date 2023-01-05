@@ -8,6 +8,9 @@ Gum is a collection of tools focusing mainly on game development with the goal o
 </p>
 
 # Made With Gum
+
+You can create a pull request or email me directly to display your game/company here emrefistikcioglu@gmail.com
+
 <p align="center">
   <img src="Resources/everblast.png?raw=true width="350" title="Gleam Games">
 </p>
