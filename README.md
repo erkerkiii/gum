@@ -4,7 +4,7 @@ Gum is a collection of tools focusing mainly on game development with the goal o
 
 # Trusted By
 <p align="center">
-  <img src="Resources/gleamgames.png?raw=true width="350" height="350" title="Gleam Games">
+  <img src="Resources/gleamgames.png?raw=true width="350" title="Gleam Games">
 </p>
 
 # Made With Gum
