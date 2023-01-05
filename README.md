@@ -11,6 +11,7 @@ Gum is a collection of tools focusing mainly on game development with the goal o
 <p align="center">
   <img src="Resources/everblast.png?raw=true width="350" title="Gleam Games">
 </p>
+
 [EverBlast - Blast and Match](https://play.google.com/store/apps/details?id=com.gleamgames.everblast&hl=en&gl=US)
 
 ## Pooling
