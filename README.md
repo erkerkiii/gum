@@ -4,7 +4,7 @@ Gum is a collection of tools focusing mainly on game development with the goal o
 
 # Trusted By
 <p align="center">
-  <img src="Resources/gleamgames.png?raw=true width="350" title="Gleam Games">
+  <img src="Resources/gleamgames.png?raw=true width="350" height="350" title="Gleam Games">
 </p>
 
 # Made With Gum
@@ -12,7 +12,7 @@ Gum is a collection of tools focusing mainly on game development with the goal o
 You can create a pull request or email me directly to display your game/company here emrefistikcioglu@gmail.com
 
 <p align="center">
-  <img src="Resources/everblast.png?raw=true width="350" title="Gleam Games">
+  <img src="Resources/everblast.png?raw=true width="350" height="350" title="Gleam Games">
 </p>
 
 [EverBlast - Blast and Match](https://play.google.com/store/apps/details?id=com.gleamgames.everblast&hl=en&gl=US)
