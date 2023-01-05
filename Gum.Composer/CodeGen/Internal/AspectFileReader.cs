@@ -13,7 +13,7 @@ namespace Gum.Composer.CodeGen.Internal
 
 		public static async Task<IEnumerable<AspectPrototype>> ReadAspectsAsync()
 		{
-			string[] files = Directory.GetFiles(UserConfig.ASPECTS_DIRECTORY_PATH, SEARCH_PATTERN, SearchOption.AllDirectories);
+			string[] files = Directory.GetFiles(UserConfig.AspectsDirectoryPath, SEARCH_PATTERN, SearchOption.AllDirectories);
 			List<AspectPrototype> aspectPrototypes = new List<AspectPrototype>();
 			for (int index = 0; index < files.Length; index++)
 			{

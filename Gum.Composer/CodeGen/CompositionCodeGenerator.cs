@@ -88,8 +88,8 @@ namespace Gum.Composer.CodeGen
 
 			aspectFileStringBuilder.Append(LINE + "}");
 
-			const string aspectTypeEnumFile = UserConfig.OUTPUT_DIRECTORY_PATH + ASPECT_TYPE_FILE;
-			const string aspectsFile = UserConfig.OUTPUT_DIRECTORY_PATH + ASPECTS_FILE;
+			string aspectTypeEnumFile = @$"{UserConfig.OutputDirectoryPath}\{ASPECT_TYPE_FILE}";
+			string aspectsFile = @$"{UserConfig.OutputDirectoryPath}\{ASPECTS_FILE}";
 
 			EnsureFilePath(aspectTypeEnumFile);
 			EnsureFilePath(aspectsFile);
