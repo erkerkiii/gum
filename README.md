@@ -2,12 +2,16 @@
 
 Gum is a collection of tools focusing mainly on game development with the goal of getting rid of the boilerplate code.
 
+# Trusted By
+<p align="center">
+  <img src="Resources/gleamgames.png?raw=true width="350" title="Gleam Games">
+</p>
 
 ## Pooling
 This is a very basic implementation of the pooling system.
 ```CSharp
 PoolBuilder<Foo> poolBuilder = new PoolBuilder<Foo>();
-IPool<> pool = _poolBuilder
+IPool<Foo> pool = _poolBuilder
                 .SetPoolType(PoolType.Stack) //this is the default pool type
                 .FromPoolableInstanceProvider(new FooInstanceProvider())
                 .WithInitialSize(10) //this is 0 by default
