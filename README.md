@@ -109,7 +109,7 @@ Foo foo = _poolCollection.Get(key); //gets an object from the pool with the spec
 1. Go to ```Gum.Composer\Aspects```
 2. Create a file with extension ".gum"
 3. Start typing your aspect
-4. Run the codegen using ```CompositionCodeGenerator.RunAsync```
+4. Run the codegen using ```CompositionCodeGenerator.Run()```
 
 Example aspect file
 MyAspect.gum
@@ -133,7 +133,7 @@ You can use ANY object type while creating aspects.
 private async Task RunAsync()
 {
     //you can call this method from anywhere (from unity editor or a console application)
-    await CompositionCodeGenerator.RunAsync(); 
+    await CompositionCodeGenerator.Run(); 
 }
 ```
 
