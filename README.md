@@ -98,6 +98,7 @@ Foo foo = _poolCollection.Get(key); //gets an object from the pool with the spec
 4. Run the codegen using ```CompositionCodeGenerator.RunAsync```
 
 Example aspect file
+MyAspect.gum
 ```
 aspect MyAspect 
 {
@@ -175,7 +176,7 @@ Other usages
 ```CSharp
 composition
     .GetAspectFluent(out FooAspect fooAspect)
-	.GetAspectFluent(out BarAspect barAspect);
+    .GetAspectFluent(out BarAspect barAspect);
 	
 BarAspect barAspect = (BarAspect)_composition[BarAspect.ASPECT_TYPE];
 
