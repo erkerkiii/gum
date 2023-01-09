@@ -72,7 +72,7 @@ namespace Gum.Pooling
                     throw new ArgumentOutOfRangeException();
             }
 
-            instance.OnReturnToPoolRequested += Put;
+            instance.OnReturnToPoolRequested += () => Put(instance);
 
             return instance;
         }
