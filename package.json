@@ -1,0 +1,51 @@
+{
+  "name": "com.erkerkiii.gum",
+  "displayName": "Gum",
+  "unity": "2019.3",
+  "version": "1.0.0",
+  "description": "Gum is a collection of tools focusing mainly on game development with the goal of getting rid of the boilerplate code.",
+  "main": "Gum.Core",
+  "scripts": {
+    "test": "dotnet run --project Tests",
+    "prepack": "npmignore --auto"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erkerkiii/gum.git"
+  },
+  "keywords": [
+	"pooling",
+    "object pooling",
+    "web request",
+    "composition",
+    "signal",
+    "observer pattern"
+  ],
+  "author": "Suleyman Emre Fistikcioglu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/erkerkiii/gum/issues"
+  },
+  "homepage": "https://github.com/erkerkiii/gum#readme",
+  "publishConfig": {
+    "ignore": [
+      "Resources/",
+      "Gum.Composer/bin",
+      "Gum.Composer/obj",
+      "Gum.Core/bin",
+      "Gum.Core/obj",
+      "Gum.Core/.idea",
+      "Gum.Sandbox",
+      "Gum.Pooling/bin",
+      "Gum.Pooling/obj",
+      "Gum.Signal/obj",
+      "Gum.Signal/bin",
+      "Gum.WebRequest/obj",
+      "Gum.WebRequest/bin",
+      "Tests/obj",
+      "Tests/bin",
+      ".idea",
+      ".vs"
+    ]
+  }
+}
