@@ -2,6 +2,16 @@
 
 Gum is a collection of tools focusing mainly on game development with the goal of getting rid of the boilerplate code.
 
+## Table Of Contents
+
+<details>
+<summary>Details</summary>
+
+- [Pooling](#pooling)
+- [Composer](#composer)
+
+</details>
+
 # Trusted By
 <p align="center">
   <img src="Resources/gleamgames.png?raw=true width="350" title="Gleam Games">
