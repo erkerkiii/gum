@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Gum.Pooling.Collections
 {
-	public class PooledList<T> : List<T>, IDisposable
+	public sealed class PooledList<T> : List<T>, IDisposable
 	{
 		public static PooledList<T> Get()
 		{

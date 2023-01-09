@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using Gum.Composer.CodeGen.Config;
 
 namespace Gum.Composer.CodeGen.Internal

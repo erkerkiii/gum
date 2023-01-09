@@ -1,4 +1,5 @@
 ﻿using Gum.Composer;
+using Gum.Pooling;
 
 namespace Tests.CompositionTests
 {
@@ -13,10 +14,9 @@ namespace Tests.CompositionTests
 
 		public Composition GetComposition()
 		{
-			return Composition.Create(new IAspect[]
-			{
-				new BarAspect(MyInt)
-			});
+			IAspect[] aspects = ArrayPool<IAspect>.GetPool(1).Get();
+			aspects[0] = new BarAspect(MyInt);
+			return Composition.Create(aspects);
 		}
 	}
 }

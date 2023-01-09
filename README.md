@@ -148,30 +148,29 @@ public struct Foo : IComposable
     
     public Vector3 baz;
 
-    public Composition GetComposition()
+    public Composition GetComposition() //this part has to be written manually
     {
-        return Composition.Create(new IAspect[]
-        {
-            new FooAspect(foo),
-            new BarAspect(bar),
-            new BazAspect(baz)
-        });
+        //use array pools to allocate less
+        IAspect[] aspects = ArrayPool<IAspect>.GetPool(3).Get();
+        aspects[0] = new FooAspect(foo),;
+        aspects[1] = new BarAspect(bar);
+        aspects[2] = new BazAspect(baz);
+        return Composition.Create(aspects);
     }
 }
 
 public class Bar : IComposable
 {
-    public double Qux;
+    public double qux;
     
     public string bar;
     
     public Composition GetComposition()
     {
-        return Composition.Create(new IAspect[]
-        {
-            new QuxAspect(foo),
-            new BarAspect(bar),
-        });
+        IAspect[] aspects = ArrayPool<IAspect>.GetPool(2).Get();
+        aspects[0] = new QuxAspect(qux);
+        aspects[1] = new BarAspect(bar);
+        return Composition.Create(aspects);
     }
 }
 

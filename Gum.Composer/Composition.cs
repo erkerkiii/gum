@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using Gum.Composer.Exception;
 using Gum.Composer.Generated;
 using Gum.Composer.Internal;
+using Gum.Pooling;
 using Gum.Pooling.Collections;
 
 namespace Gum.Composer
@@ -16,6 +17,8 @@ namespace Gum.Composer
 
 		public IAspect this[AspectType aspectType] => _aspectLookUp[aspectType];
 
+		private readonly IAspect[] _aspects;
+		
 		public int AspectCount => IsValid
 			? _aspectLookUp.Count
 			: 0;
@@ -24,6 +27,7 @@ namespace Gum.Composer
 
 		private Composition(IAspect[] aspects)
 		{
+			_aspects = aspects;
 			_aspectLookUp = PooledDictionary<AspectType, IAspect>.Get();
 
 			for (int index = 0; index < aspects?.Length; index++)
@@ -42,8 +46,8 @@ namespace Gum.Composer
 		public TAspect GetAspect<TAspect>() where TAspect : IAspect
 		{
 			SanityCheck();
-			
-			return (TAspect) _aspectLookUp[AspectDatabase.GetAspectTypeOfType(typeof(TAspect))];
+
+			return (TAspect)_aspectLookUp[AspectDatabase.GetAspectTypeOfType(typeof(TAspect))];
 		}
 
 		public bool TryGetAspect<TAspect>(out TAspect aspect) where TAspect : IAspect
@@ -56,7 +60,7 @@ namespace Gum.Composer
 			{
 				return false;
 			}
-			
+
 			aspect = (TAspect)_aspectLookUp[AspectDatabase.GetAspectTypeOfType(typeof(TAspect))];
 			return true;
 		}
@@ -67,11 +71,11 @@ namespace Gum.Composer
 			aspect = (TAspect)_aspectLookUp[AspectDatabase.GetAspectTypeOfType(typeof(TAspect))];
 			return this;
 		}
-		
+
 		public void AddAspect<TAspect>(TAspect aspect) where TAspect : IAspect
 		{
 			SanityCheck();
-			
+
 			if (_aspectLookUp.ContainsKey(aspect.Type))
 			{
 				return;
@@ -83,13 +87,13 @@ namespace Gum.Composer
 		public void SetAspect<TAspect>(TAspect aspect) where TAspect : IAspect
 		{
 			SanityCheck();
-			
+
 			if (!_aspectLookUp.ContainsKey(aspect.Type))
 			{
 				AddAspect(aspect);
 				return;
 			}
-			
+
 			_aspectLookUp[aspect.Type] = aspect;
 		}
 
@@ -109,7 +113,7 @@ namespace Gum.Composer
 			SanityCheck();
 			return _aspectLookUp.ContainsKey(aspectType);
 		}
-		
+
 		private void SanityCheck()
 		{
 			if (!IsValid)
@@ -122,13 +126,14 @@ namespace Gum.Composer
 		public void Dispose()
 		{
 			_aspectLookUp.Dispose();
+			ArrayPool<IAspect>.GetPool(_aspects.Length).Put(_aspects);
 		}
-		
+
 		public Enumerator GetEnumerator()
 		{
 			return new Enumerator(this);
 		}
-		
+
 		public struct Enumerator : IEnumerator<IAspect>
 		{
 			public IAspect Current
