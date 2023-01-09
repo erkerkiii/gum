@@ -42,7 +42,7 @@ Foo foo = pool.Get(); //gets an object from the pool, if it doesn't exists it cr
 
 public class Foo : IPoolable
 {
-    public event Action<IPoolable> OnReturnToPoolRequested;
+    public event Action OnReturnToPoolRequested;
 
     public Reset()
     {
@@ -62,7 +62,7 @@ Pool usage with Unity's MonoBehaviour
 ```CSharp
 public class Foo : MonoBehaviour, IPoolable
 {
-    public event Action<IPoolable> OnReturnToPoolRequested;
+    public event Action OnReturnToPoolRequested;
 
     public Reset()
     {
@@ -72,7 +72,7 @@ public class Foo : MonoBehaviour, IPoolable
     public void ReturnToPool()
     {
         gameObject.SetActive(false);
-        OnReturnToPoolRequested.Invoke(this);      
+        OnReturnToPoolRequested.Invoke();      
     }
 
     public void Erase()

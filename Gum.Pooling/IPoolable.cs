@@ -4,7 +4,7 @@ namespace Gum.Pooling
 {
     public interface IPoolable
     {
-        event Action<IPoolable> OnReturnToPoolRequested;
+        event Action OnReturnToPoolRequested;
 
         void Reset();
         void Erase();

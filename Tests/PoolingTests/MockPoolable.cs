@@ -5,7 +5,7 @@ namespace Tests.PoolingTests
 {
     public class MockPoolable : IPoolable
     {
-        public event Action<IPoolable> OnReturnToPoolRequested;
+        public event Action OnReturnToPoolRequested;
 
         public bool IsActive { get; private set; }
         public bool IsErased { get; private set; }
@@ -24,7 +24,7 @@ namespace Tests.PoolingTests
         {
             IsActive = false;
 
-            OnReturnToPoolRequested?.Invoke(this);
+            OnReturnToPoolRequested?.Invoke();
         }
 
         public void Erase()

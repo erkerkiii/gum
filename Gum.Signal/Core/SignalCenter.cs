@@ -22,10 +22,14 @@ namespace Gum.Signal.Core
 		{
 			lock (_lock)
 			{
-				Entry[] entriesToRemove = _entries.Where(e => (Action<T>)e.Delegate == action).ToArray();
-				for (int index = 0; index < entriesToRemove.Length; index++)
+				for (int index = 0; index < _entries.Count; index++)
 				{
-					_entries.Remove(entriesToRemove[index]);
+					Entry entry = _entries[index];
+
+					if ((Action<T>)entry.Delegate == action)
+					{
+						_entries.Remove(entry);
+					}
 				}
 			}
 		}
