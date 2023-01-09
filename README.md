@@ -152,7 +152,7 @@ public struct Foo : IComposable
     {
         //use array pools to allocate less
         IAspect[] aspects = ArrayPool<IAspect>.GetPool(3).Get();
-        aspects[0] = new FooAspect(foo),;
+        aspects[0] = new FooAspect(foo);
         aspects[1] = new BarAspect(bar);
         aspects[2] = new BazAspect(baz);
         return Composition.Create(aspects);
