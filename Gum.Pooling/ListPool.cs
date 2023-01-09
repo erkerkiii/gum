@@ -3,7 +3,7 @@ using Gum.Pooling.Collections;
 
 namespace Gum.Pooling
 {
-	internal class ListPool<T>
+	internal sealed class ListPool<T>
 	{
 		private readonly Stack<PooledList<T>> _pool = new Stack<PooledList<T>>();
 

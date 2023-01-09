@@ -3,7 +3,7 @@ using Gum.Pooling.Collections;
 
 namespace Gum.Pooling
 {
-	internal class DictionaryPool<TKey, TValue>
+	internal sealed class DictionaryPool<TKey, TValue>
 	{
 		private readonly Stack<PooledDictionary<TKey, TValue>> _pool = new Stack<PooledDictionary<TKey, TValue>>();
 		
