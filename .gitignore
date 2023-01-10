@@ -351,6 +351,7 @@ MigrationBackup/
 
 #npm
 .npmignore
+node_modules
 
 #macOS
 .DS_Store

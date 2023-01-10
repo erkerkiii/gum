@@ -4,13 +4,9 @@ Gum is a collection of tools focusing mainly on game development with the goal o
 
 ## Table Of Contents
 
-<details>
-<summary>Details</summary>
-
+- [Installation](#installation)
 - [Pooling](#pooling)
 - [Composer](#composer)
-
-</details>
 
 # Trusted By
 <p align="center">
@@ -26,6 +22,30 @@ You can create a pull request or email me directly to display your game/company 
 </p>
 
 [EverBlast - Blast and Match](https://play.google.com/store/apps/details?id=com.gleamgames.everblast&hl=en&gl=US)
+
+## Installation
+
+# Unity
+Add this to the Packages\manifest.json
+
+```
+"scopedRegistries": [
+    {
+        "name": "NPM",
+        "url": "https://registry.npmjs.org",
+        "scopes": [
+        "com.erkerkiii.gum"
+        ]
+    }
+]
+```
+
+Dependencies
+```
+ "dependencies": {
+    "com.erkerkiii.gum":  "1.0.5"
+    }
+```
 
 ## Pooling
 This is a very basic implementation of the pooling system.
