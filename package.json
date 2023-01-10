@@ -45,7 +45,12 @@
       "Tests/obj",
       "Tests/bin",
       ".idea",
-      ".vs"
+      ".vs",
+      "bin.meta",
+      "obj.meta",
+      "Resources.meta",
+      "Gum.Sandbox.meta",
+      "node_modules.meta"
     ]
   }
 }
