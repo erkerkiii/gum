@@ -13,9 +13,6 @@
     "type": "git",
     "url": "git+https://github.com/erkerkiii/gum.git"
   },
-  "files": [
-    "*.meta"
-  ],
   "keywords": [
     "pooling",
     "object pooling",
