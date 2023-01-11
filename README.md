@@ -258,7 +258,7 @@ SignalCenter signalCenter = new SignalCenter(); //pass this reference to places 
 
 private void Bar(FooSignal fooSignal)
 {
-    Assert.AreEqual(VALUE, fooSignal.Value);
+    //do stuff
 }
 
 signalCenter.Subscribe<FooSignal>(Action); //to subscribe
