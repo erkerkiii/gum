@@ -240,6 +240,19 @@ foreach (IAspect aspect in composition)
 ```Gum.Signals``` is a very light-weight and simple pub/sub system.
 
 Usage
+
+```Csharp
+public readonly struct FooSignal
+{
+    public readonly int Value;
+
+    public FooSignal(int value)
+    {
+        Value = value;
+    }
+}
+```
+	
 ```Csharp
 SignalCenter signalCenter = new SignalCenter(); //pass this reference to places of usage (preferably with a DI framework)
 
