@@ -7,6 +7,7 @@ Gum is a collection of tools focusing mainly on game development with the goal o
 - [Installation](#installation)
 - [Pooling](#pooling)
 - [Composer](#composer)
+- [Signals(pub/sub)](#signals)
 
 # Trusted By
 <p align="center">
@@ -26,7 +27,7 @@ You can create a pull request or email me directly to display your game/company 
 ## Installation
 
 # Unity
-Add this to the Packages\manifest.json
+Add this to the ```Packages\manifest.json```
 
 ```
 "scopedRegistries": [
@@ -58,7 +59,7 @@ IPool<Foo> pool = _poolBuilder
                 .Build();
 ```
 
-Alternatively, you can use "FromMethod"
+Alternatively, you can use ```FromMethod```
 ```CSharp
 IPool<Foo> pool = _poolBuilder
                 .SetPoolType(PoolType.Stack)
@@ -233,4 +234,21 @@ foreach (IAspect aspect in composition)
 {
     BarAspect barAspect = (BarAspect)aspect;
 }
+```
+
+## Signals
+```Gum.Signals``` is a very light-weight and simple pub/sub system.
+
+Usage
+```Csharp
+SignalCenter signalCenter = new SignalCenter(); //pass this reference to places of usage (preferably with a DI framework)
+
+private void Bar(FooSignal fooSignal)
+{
+    Assert.AreEqual(VALUE, fooSignal.Value);
+}
+
+signalCenter.Subscribe<FooSignal>(Action); //to subscribe
+signalCenter.Unsubscribe<FooSignal>(Action); //to unsubscribe
+_signalCenter.Fire(new FooSignal()); //to fire signals
 ```
