@@ -250,5 +250,5 @@ private void Bar(FooSignal fooSignal)
 
 signalCenter.Subscribe<FooSignal>(Action); //to subscribe
 signalCenter.Unsubscribe<FooSignal>(Action); //to unsubscribe
-_signalCenter.Fire(new FooSignal()); //to fire signals
+signalCenter.Fire(new FooSignal()); //to fire signals
 ```
