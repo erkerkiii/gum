@@ -17,7 +17,7 @@ namespace Gum.Composer.Unity.Editor
 
         private readonly Dictionary<string, string> _fieldNameTypeMap = new();
 
-        private IEnumerable<TypePrototype> _availabeTypeArray = TypeFileReader.ReadTypes();
+        private IEnumerable<Type> _availabeTypeArray = TypeFileReader.ReadTypes();
 
         private string _attemptedAspectName = string.Empty;
         private string _acceptedAspectName = string.Empty;
@@ -38,11 +38,6 @@ namespace Gum.Composer.Unity.Editor
             
             aspectCreationEditor.minSize = new Vector2(450, 200);
             aspectCreationEditor.maxSize = new Vector2(1920, 720);
-
-            TypePrototype prototype = new TypePrototype("string", typeof(string));
-            List<TypePrototype> list = new List<TypePrototype>();
-            list.Add(prototype);
-            TypeFileWriter.WriteTypes(list);
         }
 
         private void OnGUI()
@@ -86,19 +81,18 @@ namespace Gum.Composer.Unity.Editor
         private void ListAllAvailableTypes()
         {
             EditorGUILayout.BeginVertical("Box");
-            foreach (TypePrototype typePrototype in _availabeTypeArray)
+            foreach (Type type in _availabeTypeArray)
             {
-                DrawTypeUI(typePrototype);
+                DrawTypeUI(type);
             }
             EditorGUILayout.EndVertical();
         }
 
-        private void DrawTypeUI(TypePrototype typePrototype)
+        private void DrawTypeUI(Type type)
         {
             EditorGUILayout.BeginHorizontal("BoldLabel");
             
-            EditorGUILayout.LabelField(typePrototype.TypeName);
-            EditorGUILayout.LabelField(typePrototype.Type.ToString());
+            EditorGUILayout.LabelField(type.ToString());
             
             if (GUILayout.Button("x", "ToolbarSeachCancelButton"))
             {

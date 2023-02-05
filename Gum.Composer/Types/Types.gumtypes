@@ -1,4 +1,1 @@
-types
-{
-	string System.String;
-}
+System.Int32

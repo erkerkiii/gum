@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -7,33 +8,22 @@ namespace Gum.Composer.CodeGen.Internal
     public static class TypeFileWriter
     {
         private const string TYPES_FILE = "Types.gumtypes";
-        private const string TAB = "\t";
         private const string LINE = "\n";
-        private const string TYPE_NAME = "$typeName";
         private const string TYPE = "$type";
-        private const string BODY = "$BODY";
-        private const string TYPE_FILE_TEMPLATE = "types" +
-                                                  LINE + "{" +
-                                                  LINE + BODY +
-                                                  "}";
-        private const string TYPE_TEMPLATE = TAB + TYPE_NAME + " " + TYPE + ";" + LINE;
+        private const string TYPE_TEMPLATE = TYPE + LINE;
 
-        public static void WriteTypes(IEnumerable<TypePrototype> typePrototypes)
+        public static void WriteTypes(IEnumerable<Type> types)
         {
             StringBuilder typeFileStringBuilder = new StringBuilder();
             StringBuilder bodyStringBuilder = new StringBuilder();
-            foreach (TypePrototype typePrototype in typePrototypes)
+            foreach (Type type in types)
             {
-                string typeName = typePrototype.TypeName;
-                string type = typePrototype.Type.ToString();
+                string typeString = type.ToString();
 
                 bodyStringBuilder.Append(TYPE_TEMPLATE)
-                    .Replace(TYPE_NAME, typeName)
-                    .Replace(TYPE, type);
+                    .Replace(TYPE, typeString);
             }
-            typeFileStringBuilder
-                .Append(TYPE_FILE_TEMPLATE)
-                .Replace(BODY, bodyStringBuilder.ToString());
+            typeFileStringBuilder.Append(bodyStringBuilder.ToString());
 
             string typeFilePath = $@"{UserConfig.TypesDirectoryPath}\{TYPES_FILE}";
 
