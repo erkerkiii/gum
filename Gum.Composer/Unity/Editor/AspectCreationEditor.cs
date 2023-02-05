@@ -5,7 +5,6 @@ using System.Linq;
 using Gum.Composer.CodeGen;
 using Gum.Composer.CodeGen.Internal;
 using Gum.Core.Utility;
-using Gum.Pooling;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,8 +25,6 @@ namespace Gum.Composer.Unity.Editor
 
         private ErrorType _errorType = ErrorType.None;
 
-        private int _selectedTypeIndex = 0;
-
         [MenuItem("Gum/Composition/AspectCreator")]
         public static void ShowWindow()
         {
@@ -38,7 +35,6 @@ namespace Gum.Composer.Unity.Editor
         private static string[] GetAvailableTypeArray()
         {
             Type[] types = typeof(IAspect).GetAllAvailableTypes();
-            Debug.Log(types.Length);
             string[] typeNames = new string[types.Length];
 
             for (int index = 0; index < types.Length; index++)
@@ -179,7 +175,7 @@ namespace Gum.Composer.Unity.Editor
         {
             EditorGUILayout.BeginHorizontal("ToolbarButton");
 
-            _selectedTypeIndex = EditorGUILayout.Popup(_selectedTypeIndex, _availabeTypeArray);
+            _fieldType = EditorGUILayout.TextField("Type", _fieldType, "MiniTextField");
             _fieldName = EditorGUILayout.TextField("Name", _fieldName, "MiniTextField");
 
             EditorGUILayout.EndHorizontal();
