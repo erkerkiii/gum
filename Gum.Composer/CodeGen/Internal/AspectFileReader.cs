@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Gum.Composer.CodeGen.Config;
-using UnityEngine;
 
 namespace Gum.Composer.CodeGen.Internal
 {
@@ -12,11 +11,6 @@ namespace Gum.Composer.CodeGen.Internal
 		public static IEnumerable<AspectPrototype> ReadAspects()
 		{
 			string[] files = Directory.GetFiles(UserConfig.AspectsDirectoryPath, SEARCH_PATTERN, SearchOption.AllDirectories);
-			
-			foreach (string file in files)
-			{
-				Debug.Log(file.Length);
-			}
 			List<AspectPrototype> aspectPrototypes = new List<AspectPrototype>();
 			for (int index = 0; index < files.Length; index++)
 			{

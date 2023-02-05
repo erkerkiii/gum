@@ -1,7 +1,0 @@
-aspect HeroAspect
-{
-	int Value1;
-
-	int Value2;
-
-}
