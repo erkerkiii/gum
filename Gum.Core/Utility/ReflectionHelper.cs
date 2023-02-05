@@ -18,6 +18,11 @@ namespace Gum.Core.Utility
 				.Where(t => t != baseType && t.GetInterfaces().Contains(baseType))
 				.ToArray();
 		}
-
+		
+		public static Type[] GetAllAvailableTypes(this Type baseType)
+		{
+			return Thread.GetDomain().GetAssemblies()
+				.SelectMany(a => a.GetTypes()).ToArray();
+		}
 	}
 }

@@ -1,0 +1,7 @@
+aspect MyNewAspect
+{
+	int hobaa;
+
+	int Value2;
+
+}
