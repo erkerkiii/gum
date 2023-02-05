@@ -16,7 +16,7 @@ namespace Gum.Composer.CodeGen.Internal
                                                   LINE + "{" +
                                                   LINE + BODY +
                                                   "}";
-        private const string TYPE_TEMPLATE = TAB + TYPE_NAME + ", " + TYPE + ";" + LINE;
+        private const string TYPE_TEMPLATE = TAB + TYPE_NAME + " " + TYPE + ";" + LINE;
 
         public static void WriteTypes(IEnumerable<TypePrototype> typePrototypes)
         {
