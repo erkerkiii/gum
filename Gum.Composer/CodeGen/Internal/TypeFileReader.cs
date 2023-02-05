@@ -12,7 +12,7 @@ namespace Gum.Composer.CodeGen.Internal
 
         public static IEnumerable<Type> ReadTypes()
         {
-            string[] files = Directory.GetFiles(UserConfig.TypesDirectoryPath, SEARCH_PATTERN,
+            string[] files = Directory.GetFiles(UserConfig.OutputDirectoryPath, SEARCH_PATTERN,
                 SearchOption.AllDirectories);
 
             string text = File.ReadAllText(files[0]);
@@ -22,7 +22,7 @@ namespace Gum.Composer.CodeGen.Internal
         
         public static IEnumerable<string> ReadTypesAsString()
         {
-            string[] files = Directory.GetFiles(UserConfig.TypesDirectoryPath, SEARCH_PATTERN,
+            string[] files = Directory.GetFiles(UserConfig.OutputDirectoryPath, SEARCH_PATTERN,
                 SearchOption.AllDirectories);
 
             string text = File.ReadAllText(files[0]);
@@ -55,7 +55,6 @@ namespace Gum.Composer.CodeGen.Internal
                 typeName += currentChar;
             }
 
-            Debug.Log(readStrings.Count);
             return (readTypes, readStrings);
         }
     }

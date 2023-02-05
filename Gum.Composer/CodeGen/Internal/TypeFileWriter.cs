@@ -13,20 +13,20 @@ namespace Gum.Composer.CodeGen.Internal
         private const string TYPE = "$type";
         private const string TYPE_TEMPLATE = TYPE + LINE;
 
-        public static void WriteTypes(IEnumerable<Type> types)
+        public static void WriteTypes(IEnumerable<string> types)
         {
             StringBuilder typeFileStringBuilder = new StringBuilder();
             StringBuilder bodyStringBuilder = new StringBuilder();
-            foreach (Type type in types)
+            foreach (string type in types)
             {
-                string typeString = type.ToString();
+                string typeString = type;
 
                 bodyStringBuilder.Append(TYPE_TEMPLATE)
                     .Replace(TYPE, typeString);
             }
-            typeFileStringBuilder.Append(bodyStringBuilder.ToString()).Append(" ");
+            typeFileStringBuilder.Append(bodyStringBuilder.ToString());
 
-            string typeFilePath = $@"{UserConfig.TypesDirectoryPath}\{TYPES_FILE}";
+            string typeFilePath = $@"{UserConfig.OutputDirectoryPath}\{TYPES_FILE}";
 
             EnsureFilePath(typeFilePath);
             File.WriteAllText(typeFilePath, typeFileStringBuilder.ToString());

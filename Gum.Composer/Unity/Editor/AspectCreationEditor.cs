@@ -6,7 +6,6 @@ using Gum.Composer.CodeGen;
 using Gum.Composer.CodeGen.Internal;
 using Gum.Core.Utility;
 using UnityEditor;
-using UnityEditor.EditorTools;
 using UnityEngine;
 
 namespace Gum.Composer.Unity.Editor
@@ -17,16 +16,18 @@ namespace Gum.Composer.Unity.Editor
 
         private readonly Dictionary<string, string> _fieldNameTypeMap = new();
 
-        private Type[] _availabeTypes = TypeFileReader.ReadTypes().ToArray();
-        private string[] _availableTypesAsString = TypeFileReader.ReadTypesAsString().ToArray();
+        private readonly List<string> _availableTypesAsString = TypeFileReader.ReadTypesAsString().ToList();
 
         private string _attemptedAspectName = string.Empty;
         private string _acceptedAspectName = string.Empty;
         private string _fieldType = string.Empty;
         private string _fieldName = string.Empty;
+        private string _typeName;
 
         private bool _typeDrawerToggle;
+        
         private Vector2 _scrollToggle;
+
         private int _typeListIndex;
 
         private ErrorType _errorType = ErrorType.None;
@@ -36,7 +37,7 @@ namespace Gum.Composer.Unity.Editor
         {
             AspectCreationEditor aspectCreationEditor = GetWindow<AspectCreationEditor>("Aspect Creator");
             aspectCreationEditor.Show();
-            
+
             aspectCreationEditor.minSize = new Vector2(450, 200);
             aspectCreationEditor.maxSize = new Vector2(1920, 720);
         }
@@ -50,7 +51,7 @@ namespace Gum.Composer.Unity.Editor
                 TryTakeAspectName();
                 return;
             }
-            
+
             DrawEnteredAspectFields();
             DrawAddFieldDrawer();
             DrawGenerateButton();
@@ -72,40 +73,59 @@ namespace Gum.Composer.Unity.Editor
 
                 ListAllAvailableTypes();
                 AddNewType();
-            
-                EditorGUILayout.EndScrollView();    
+
+                EditorGUILayout.EndScrollView();
             }
+
             EditorGUILayout.EndFoldoutHeaderGroup();
             EditorGUILayout.EndVertical();
         }
 
         private void ListAllAvailableTypes()
         {
-            EditorGUILayout.BeginVertical("Box");
-            foreach (Type type in _availabeTypes)
+            if (_availableTypesAsString.Count <= 0)
             {
+                return;
+            }
+            
+            EditorGUILayout.BeginVertical("Box");
+            for (var index = 0; index < _availableTypesAsString.Count; index++)
+            {
+                string type = _availableTypesAsString[index];
                 DrawTypeUI(type);
             }
+
             EditorGUILayout.EndVertical();
         }
 
-        private void DrawTypeUI(Type type)
+        private void DrawTypeUI(string type)
         {
             EditorGUILayout.BeginHorizontal("BoldLabel");
-            
-            EditorGUILayout.LabelField(type.ToString());
-            
+            EditorGUILayout.LabelField(type);
+
             if (GUILayout.Button("x", "ToolbarSeachCancelButton"))
             {
-                Debug.Log("removetype");
+                _availableTypesAsString.Remove(type);
+                TypeFileWriter.WriteTypes(_availableTypesAsString);
             }
-            
             EditorGUILayout.EndHorizontal();
         }
 
         private void AddNewType()
         {
-            
+            _typeName = EditorGUILayout.TextField("Add New Type", _typeName, "TextField");
+
+            if (!IsStringEmpty(_typeName) && GUILayout.Button($"Add new type {_typeName}"))
+            {
+                if (_availableTypesAsString.Contains(_typeName))
+                {
+                    return;
+                }
+                
+                _availableTypesAsString.Add(_typeName);
+                TypeFileWriter.WriteTypes(_availableTypesAsString);
+                _typeName = string.Empty;
+            }
         }
 
         private void DrawErrorPopup()
@@ -116,7 +136,7 @@ namespace Gum.Composer.Unity.Editor
             const string aspectAlreadyExist = "Aspect already exist";
 
             string error = String.Empty;
-            
+
             switch (_errorType)
             {
                 case ErrorType.AlreadyExistingFieldNameError:
@@ -128,7 +148,7 @@ namespace Gum.Composer.Unity.Editor
             }
 
             GUILayout.Label(error, "CN StatusError");
-            
+
             if (GUILayout.Button("Close", "MiniButton"))
             {
                 _errorType = ErrorType.None;
@@ -178,7 +198,7 @@ namespace Gum.Composer.Unity.Editor
                         return;
                     }
                 }
-                
+
                 _acceptedAspectName = _attemptedAspectName;
                 _attemptedAspectName = string.Empty;
             }
@@ -219,9 +239,12 @@ namespace Gum.Composer.Unity.Editor
         {
             EditorGUILayout.BeginHorizontal("ToolbarButton");
 
-            _typeListIndex = EditorGUILayout.Popup(_typeListIndex, _availableTypesAsString);
-            _fieldType = _availableTypesAsString[_typeListIndex];
-            _fieldName = EditorGUILayout.TextField("Name", _fieldName, "MiniTextField");
+            _typeListIndex = EditorGUILayout.Popup(_typeListIndex, _availableTypesAsString.ToArray());
+            _fieldType = _availableTypesAsString.Count <= 0 
+                ? string.Empty 
+                : _availableTypesAsString[_typeListIndex];
+            
+            _fieldName = EditorGUILayout.TextField("Name", _fieldName, "TextField");
 
             EditorGUILayout.EndHorizontal();
 
@@ -256,8 +279,6 @@ namespace Gum.Composer.Unity.Editor
                 CompositionCodeGenerator.Run();
             }
         }
-        
-        
 
         private bool IsStringEmpty(string s) => s == string.Empty;
 
@@ -267,7 +288,6 @@ namespace Gum.Composer.Unity.Editor
             AlreadyExistingAspectError,
             AlreadyExistingFieldNameError
         }
-        
     }
 }
 #endif
