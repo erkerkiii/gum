@@ -17,7 +17,8 @@ namespace Gum.Composer.Unity.Editor
 
         private readonly Dictionary<string, string> _fieldNameTypeMap = new();
 
-        private IEnumerable<Type> _availabeTypeArray = TypeFileReader.ReadTypes();
+        private Type[] _availabeTypes = TypeFileReader.ReadTypes().ToArray();
+        private string[] _availableTypesAsString = TypeFileReader.ReadTypesAsString().ToArray();
 
         private string _attemptedAspectName = string.Empty;
         private string _acceptedAspectName = string.Empty;
@@ -81,7 +82,7 @@ namespace Gum.Composer.Unity.Editor
         private void ListAllAvailableTypes()
         {
             EditorGUILayout.BeginVertical("Box");
-            foreach (Type type in _availabeTypeArray)
+            foreach (Type type in _availabeTypes)
             {
                 DrawTypeUI(type);
             }
@@ -218,8 +219,8 @@ namespace Gum.Composer.Unity.Editor
         {
             EditorGUILayout.BeginHorizontal("ToolbarButton");
 
-            // _typeListIndex = EditorGUILayout.Popup(_typeListIndex, _availabeTypeArray);
-            _fieldType = EditorGUILayout.TextField("Type", _fieldType, "MiniTextField");
+            _typeListIndex = EditorGUILayout.Popup(_typeListIndex, _availableTypesAsString);
+            _fieldType = _availableTypesAsString[_typeListIndex];
             _fieldName = EditorGUILayout.TextField("Name", _fieldName, "MiniTextField");
 
             EditorGUILayout.EndHorizontal();

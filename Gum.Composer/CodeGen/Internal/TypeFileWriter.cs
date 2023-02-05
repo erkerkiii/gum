@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Gum.Composer.CodeGen.Config;
 
 namespace Gum.Composer.CodeGen.Internal
 {
@@ -23,7 +24,7 @@ namespace Gum.Composer.CodeGen.Internal
                 bodyStringBuilder.Append(TYPE_TEMPLATE)
                     .Replace(TYPE, typeString);
             }
-            typeFileStringBuilder.Append(bodyStringBuilder.ToString());
+            typeFileStringBuilder.Append(bodyStringBuilder.ToString()).Append(" ");
 
             string typeFilePath = $@"{UserConfig.TypesDirectoryPath}\{TYPES_FILE}";
 

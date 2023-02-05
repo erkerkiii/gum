@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Gum.Composer.CodeGen.Config;
+using UnityEngine;
 
 namespace Gum.Composer.CodeGen.Internal
 {
@@ -15,27 +16,47 @@ namespace Gum.Composer.CodeGen.Internal
                 SearchOption.AllDirectories);
 
             string text = File.ReadAllText(files[0]);
-            return ResolveText(text);
+            (IEnumerable<Type> types, IEnumerable<string> _) readTypes = ResolveText(text);
+            return readTypes.types;
+        }
+        
+        public static IEnumerable<string> ReadTypesAsString()
+        {
+            string[] files = Directory.GetFiles(UserConfig.TypesDirectoryPath, SEARCH_PATTERN,
+                SearchOption.AllDirectories);
+
+            string text = File.ReadAllText(files[0]);
+            (IEnumerable<Type> _, IEnumerable<string> strings) readTypes = ResolveText(text);
+            return readTypes.strings;
         }
 
-        private static IEnumerable<Type> ResolveText(string text)
+        private static (IEnumerable<Type> types, IEnumerable<string> strings) ResolveText(string text)
         {
-            List<Type> typePrototypes = new ();
+            List<Type> readTypes = new();
+            List<string> readStrings = new();
 
             char[] chars = text.ToCharArray();
 
-            bool isReadingField = false;
-            bool isReadingFieldName = false;
-            bool isReadingTypeName = false;
-            string fieldName = string.Empty;
+            bool isReadingType = false;
             string typeName = string.Empty;
             
             for (int index = 0; index < chars.Length; index++)
             {
-               
+                char currentChar = chars[index];
+
+                if (char.IsWhiteSpace(currentChar))
+                {
+                    readStrings.Add(typeName);
+                    readTypes.Add( Type.GetType(typeName));
+                    typeName = string.Empty;
+                    continue;
+                }
+
+                typeName += currentChar;
             }
 
-            return typePrototypes;
+            Debug.Log(readStrings.Count);
+            return (readTypes, readStrings);
         }
     }
 }
