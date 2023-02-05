@@ -1,7 +1,6 @@
 ﻿#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Gum.Composer.CodeGen;
 using Gum.Core.Utility;
@@ -21,7 +20,7 @@ namespace Gum.Composer.Unity.Editor
         [MenuItem("Gum/Composition/AspectEditor")]
         public static void ShowWindow()
         {
-            AspectEditor aspectEditor = GetWindow<AspectEditor>("Aspect Editor");
+            GetWindow<AspectEditor>("Aspect Editor");
         }
 
         private void OnGUI()
@@ -34,8 +33,9 @@ namespace Gum.Composer.Unity.Editor
                     _foldoutGUIMap.Add(aspectType, false);
                 }
 
-                _foldoutGUIMap[aspectType] = EditorGUILayout.BeginFoldoutHeaderGroup(_foldoutGUIMap[aspectType], aspectType.Name);
-                
+                _foldoutGUIMap[aspectType] =
+                    EditorGUILayout.BeginFoldoutHeaderGroup(_foldoutGUIMap[aspectType], aspectType.Name);
+
                 if (_foldoutGUIMap[aspectType])
                 {
                     EditorGUILayout.LabelField("Aspect Type : " + aspectType);
@@ -46,11 +46,11 @@ namespace Gum.Composer.Unity.Editor
                         EditorGUILayout.LabelField(propertyInfos[order].FieldType + propertyInfos[order].Name);
                     }
                 }
-                
+
                 EditorGUILayout.EndFoldoutHeaderGroup();
             }
-            
-            
+
+
             if (GUILayout.Button("Run CodeGen"))
             {
                 CompositionCodeGenerator.Run();

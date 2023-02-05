@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Gum.Composer.Utility;
 
 namespace Gum.Composer.CodeGen.Internal
 {
@@ -39,16 +40,8 @@ namespace Gum.Composer.CodeGen.Internal
                 
                 aspectStringBuilder.Replace(BODY, bodyStringBuilder.ToString());
                 string aspectFile = $@"{UserConfig.AspectsDirectoryPath}\{aspectName + FILE_EXTENTION}";
-                EnsureFilePath(aspectFile);
+                FilePathHelper.EnsureFilePath(aspectFile);
                 File.WriteAllText(aspectFile, aspectStringBuilder.ToString());
-            }
-        }
-        
-        internal static void EnsureFilePath(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
-                File.Create(filePath).Close();
             }
         }
     }
