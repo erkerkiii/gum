@@ -44,7 +44,7 @@ namespace Gum.Composer.CodeGen.Internal
             }
         }
         
-        private static void EnsureFilePath(string filePath)
+        internal static void EnsureFilePath(string filePath)
         {
             if (!File.Exists(filePath))
             {
