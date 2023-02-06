@@ -39,7 +39,6 @@ namespace Gum.Composer.Unity.Editor
             List<string> readStrings = new List<string>();
 
             char[] chars = text.ToCharArray();
-
             string typeName = string.Empty;
 
             for (int index = 0; index < chars.Length; index++)

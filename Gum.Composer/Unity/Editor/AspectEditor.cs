@@ -11,8 +11,6 @@ namespace Gum.Composer.Unity.Editor
 {
     public class AspectEditor : EditorWindow
     {
-        private readonly string ASPECT_FILE_PATH = $"${UserConfig.AspectsDirectoryPath}";
-
         private static readonly Type[] AspectTypes = typeof(IAspect).GetDerivedTypesOfInterface();
 
         private readonly Dictionary<Type, bool> _foldoutGUIMap = new();
@@ -49,7 +47,6 @@ namespace Gum.Composer.Unity.Editor
 
                 EditorGUILayout.EndFoldoutHeaderGroup();
             }
-
 
             if (GUILayout.Button("Run CodeGen"))
             {

@@ -21,7 +21,6 @@ namespace Gum.Composer.Unity.Editor
             typeof(GameObject).FullName,
             typeof(Collider).FullName,
         };
-
         private const string LINE = "\n";
         private const string TYPE = "$type";
         private const string TYPE_TEMPLATE = TYPE + LINE;
