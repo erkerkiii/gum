@@ -12,15 +12,6 @@ namespace Gum.Composer.Unity.Editor
 {
     internal static class TypeFileWriter
     {
-        private static readonly string[] CommonUnityTypeNames =
-        {
-            typeof(Vector3).FullName,
-            typeof(Vector2).FullName,
-            typeof(Transform).FullName,
-            typeof(Quaternion).FullName,
-            typeof(GameObject).FullName,
-            typeof(Collider).FullName,
-        };
         private const string LINE = "\n";
         private const string TYPE = "$type";
         private const string TYPE_TEMPLATE = TYPE + LINE;
@@ -29,18 +20,7 @@ namespace Gum.Composer.Unity.Editor
         {
             StringBuilder typeFileStringBuilder = new StringBuilder();
             StringBuilder bodyStringBuilder = new StringBuilder();
-            foreach (string type in types)
-            {
-                AppendTypeName(type, bodyStringBuilder);
-            }
-
-            foreach (string type in CommonUnityTypeNames)
-            {
-                AppendTypeName(type, bodyStringBuilder);
-            }
-            
-            foreach (string type in typeof(Type).Assembly.GetTypes()
-                         .Where(x => x.IsPrimitive).Select(x => x.FullName))
+            foreach (string type in types) 
             {
                 AppendTypeName(type, bodyStringBuilder);
             }

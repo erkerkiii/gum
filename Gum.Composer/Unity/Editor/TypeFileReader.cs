@@ -2,21 +2,35 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Gum.Composer.Unity.Config;
 using Gum.Composer.Utility;
+using UnityEngine;
 
 namespace Gum.Composer.Unity.Editor
 {
     public static class TypeFileReader
     {
         private const string SEARCH_PATTERN = "*.gum";
+        
+        private static readonly List<string> CommonUnityTypeNames = new List<string>() 
+        {
+            typeof(Vector3).FullName,
+            typeof(Vector2).FullName,
+            typeof(Transform).FullName,
+            typeof(Quaternion).FullName,
+            typeof(GameObject).FullName,
+            typeof(Collider).FullName
+        };
 
         public static IEnumerable<string> ReadTypesAsString()
         {
             string text = GetTypeText();
             if (text == string.Empty)
             {
-                TypeFileWriter.WriteTypes(Array.Empty<string>());
+                CommonUnityTypeNames.AddRange(typeof(Type).Assembly.GetTypes()
+                    .Where(x => x.IsPrimitive).Select(x => x.FullName));
+                TypeFileWriter.WriteTypes(CommonUnityTypeNames);
                 text = GetTypeText();
             }
 

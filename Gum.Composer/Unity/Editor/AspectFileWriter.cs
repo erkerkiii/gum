@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Gum.Composer.CodeGen;
 using Gum.Composer.Utility;
 
-namespace Gum.Composer.CodeGen.Internal
+namespace Gum.Composer.Unity.Editor
 {
     public static class AspectFileWriter
     {
@@ -46,3 +48,4 @@ namespace Gum.Composer.CodeGen.Internal
         }
     }
 }
+#endif
