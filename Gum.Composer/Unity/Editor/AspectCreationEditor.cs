@@ -187,7 +187,7 @@ namespace Gum.Composer.Unity.Editor
             Repaint();
 
             if (_attemptedAspectName != String.Empty &&
-                GUILayout.Button($"Name new aspect : {_attemptedAspectName}Aspect"))
+                GUILayout.Button($"Name new aspect : {_attemptedAspectName}"))
             {
                 for (int index = 0; index < AspectTypes.Length; index++)
                 {

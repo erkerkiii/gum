@@ -140,7 +140,9 @@ Foo foo = _poolCollection.Get(key); //gets an object from the pool with the spec
 1. Go to ```Gum.Composer\Aspects```
 2. Create a file with extension ".gum"
 3. Start typing your aspect
-4. Run the codegen using ```CompositionCodeGenerator.Run()```
+4. Run the codegen using ```CompositionCodeGenerator.Run()``` or use [editor tool](#aspect-creator-tool) for calling codegen.
+
+> **_NOTE:_**  Editor tool is available for creating aspects. Check out [editor tool](#aspect-creator-tool) for more information.
 
 Example aspect file
 MyAspect.gum
@@ -216,7 +218,7 @@ public void UseAspects(IComposable composable)
 }
 ```
 
-Other usages
+### Other usages
 ```CSharp
 composition
     .GetAspectFluent(out FooAspect fooAspect)
@@ -235,6 +237,25 @@ foreach (IAspect aspect in composition)
     BarAspect barAspect = (BarAspect)aspect;
 }
 ```
+## Aspect Creator Tool
+
+Editor tool for aspect creation is located on Gum/Composition/AspectCreator on the editor menu. Aspect creator automates adding new aspects to the project. It generates aspects with given name to aspects folder with ".gum" extention. In order to generate aspect, it's required add least one field including it's Type and field name. Aspect generator includes built-in types but it can be extendable via adding new types.  
+
+<p align="center">
+  <img src="Resources/Aspect-Creator-1.png?raw=true width="350" height="350" title="Aspect Creator">
+</p>
+
+Basic usage:
+
+<p align="center">
+  <img src="Resources/Aspect-Create.gif?raw=true width="350" height="350" title="Aspect Creator">
+</p>
+
+Adding new types for extending:
+
+<p align="center">
+  <img src="Resources/Aspect-Type-Create.gif?raw=true width="350" height="350" title="Aspect Creator">
+</p>
 
 ## Signals
 ```Gum.Signals``` is a very light-weight and simple pub/sub system.
