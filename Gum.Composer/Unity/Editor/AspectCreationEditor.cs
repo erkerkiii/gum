@@ -72,13 +72,12 @@ namespace Gum.Composer.Unity.Editor
         {
             EditorGUILayout.BeginVertical();
             _typeDrawerToggle = EditorGUILayout.BeginFoldoutHeaderGroup(_typeDrawerToggle, "Edit Available Types");
+            
             if (_typeDrawerToggle)
             {
                 _scrollToggle = EditorGUILayout.BeginScrollView(_scrollToggle, false, true);
-
                 ListAllAvailableTypes();
                 AddNewType();
-
                 EditorGUILayout.EndScrollView();
             }
 
@@ -99,7 +98,6 @@ namespace Gum.Composer.Unity.Editor
                 string type = AvailableTypesAsString[index];
                 DrawTypeUI(type);
             }
-
             EditorGUILayout.EndVertical();
         }
 
@@ -270,6 +268,12 @@ namespace Gum.Composer.Unity.Editor
             {
                 if (IsStringEmpty(_acceptedAspectName))
                 {
+                    return;
+                }
+
+                if (_fieldNameTypeMap.Count <= 0)
+                {
+                    Debug.LogError("Error while generating aspect! In order to generate aspect, least one field is required.");
                     return;
                 }
 
