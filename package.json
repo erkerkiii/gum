@@ -2,7 +2,7 @@
   "name": "com.erkerkiii.gum",
   "displayName": "Gum",
   "unity": "2019.3",
-  "version": "1.0.0",
+  "version": "1.0.8",
   "description": "Gum is a collection of tools focusing mainly on game development with the goal of getting rid of the boilerplate code.",
   "main": "Gum.Core",
   "scripts": {
