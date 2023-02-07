@@ -18,6 +18,5 @@ namespace Gum.Core.Utility
 				.Where(t => t != baseType && t.GetInterfaces().Contains(baseType))
 				.ToArray();
 		}
-
 	}
 }

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using Gum.Composer.CodeGen.Internal;
+using Gum.Composer.Utility;
 
 namespace Gum.Composer.CodeGen
 {
@@ -93,21 +94,13 @@ namespace Gum.Composer.CodeGen
 			string aspectTypeEnumFile = $@"{UserConfig.OutputDirectoryPath}\{ASPECT_TYPE_FILE}";
 			string aspectsFile = $@"{UserConfig.OutputDirectoryPath}\{ASPECTS_FILE}";
 
-			EnsureFilePath(aspectTypeEnumFile);
-			EnsureFilePath(aspectsFile);
+			FilePathHelper.EnsureFilePath(aspectTypeEnumFile);
+			FilePathHelper.EnsureFilePath(aspectsFile);
 
 			File.WriteAllText(aspectTypeEnumFile, ENUM_TEMPLATE
 				.Replace(NAMESPACE, UserConfig.NAMESPACE)
 				.Replace(CONTENT, aspectTypeEnumStringBuilder.ToString()));
 			File.WriteAllText(aspectsFile, aspectFileStringBuilder.ToString());
-		}
-
-		private static void EnsureFilePath(string filePath)
-		{
-			if (!File.Exists(filePath))
-			{
-				File.Create(filePath).Close();
-			}
 		}
 	}
 }
