@@ -49,6 +49,6 @@
     ]
   },
   "dependencies": {
-    "npmignore": "^0.3.0"
+    "npmignore": "0.3.0"
   }
 }
