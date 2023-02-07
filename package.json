@@ -2,7 +2,7 @@
   "name": "com.erkerkiii.gum",
   "displayName": "Gum",
   "unity": "2019.3",
-  "version": "1.0.8",
+  "version": "1.0.0",
   "description": "Gum is a collection of tools focusing mainly on game development with the goal of getting rid of the boilerplate code.",
   "main": "Gum.Core",
   "scripts": {
@@ -45,12 +45,10 @@
       "Tests/obj",
       "Tests/bin",
       ".idea",
-      ".vs",
-      "bin.meta",
-      "obj.meta",
-      "Resources.meta",
-      "Gum.Sandbox.meta",
-      "node_modules.meta"
+      ".vs"
     ]
+  },
+  "dependencies": {
+    "npmignore": "^0.3.0"
   }
 }
