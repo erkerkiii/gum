@@ -13,7 +13,7 @@ namespace Gum.Composer.Unity.Editor
     {
         private static readonly Type[] AspectTypes = typeof(IAspect).GetDerivedTypesOfInterface();
 
-        private readonly Dictionary<Type, bool> _foldoutGUIMap = new();
+        private readonly Dictionary<Type, bool> _foldoutGUIMap = new Dictionary<Type, bool>();
 
         [MenuItem("Gum/Composition/AspectEditor")]
         public static void ShowWindow()
@@ -36,7 +36,7 @@ namespace Gum.Composer.Unity.Editor
 
                 if (_foldoutGUIMap[aspectType])
                 {
-                    EditorGUILayout.LabelField("Aspect Type : " + aspectType);
+                    EditorGUILayout.LabelField($"Aspect Type : {aspectType}");
 
                     FieldInfo[] propertyInfos = aspectType.GetFields();
                     for (int order = 0; order < propertyInfos.Length; order++)
