@@ -13,7 +13,7 @@ namespace Gum.Composer.Unity.Editor
     {
         private static readonly Type[] AspectTypes = typeof(IAspect).GetDerivedTypesOfInterface();
 
-        private readonly Dictionary<Type, bool> _foldoutGUIMap = new();
+        private readonly Dictionary<Type, bool> _foldoutGUIMap = new Dictionary<Type, bool>();
 
         [MenuItem("Gum/Composition/AspectEditor")]
         public static void ShowWindow()
