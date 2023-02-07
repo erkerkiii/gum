@@ -47,8 +47,5 @@
       ".idea",
       ".vs"
     ]
-  },
-  "dependencies": {
-    "npmignore": "0.3.0"
   }
 }
