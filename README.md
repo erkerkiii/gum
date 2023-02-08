@@ -240,8 +240,14 @@ public class FooView : MonoComposable
         return aspects;
     }
 
-
-    
+    public void UseFoo() 
+    {
+        // Composition field is available on MonoComposable classes.
+        // All features of Composition is available with this field; 
+        FooAspect fooAspect = Composition.GetAspect<FooAspect>(); 
+        
+        DoOtherThing(fooAspect.Value);
+    }
 }
 ```
 
