@@ -14,7 +14,7 @@ namespace Gum.Composer.Unity.Editor
     {
         private static readonly Type[] AspectTypes = typeof(IAspect).GetDerivedTypesOfInterface();
 
-        private readonly Dictionary<string, string> _fieldNameTypeMap = new();
+        private readonly Dictionary<string, string> _fieldNameTypeMap = new Dictionary<string, string>();
 
         private List<string> _availableTypesAsString = new List<string>();
         private List<string> AvailableTypesAsString
