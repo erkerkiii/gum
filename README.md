@@ -223,30 +223,15 @@ public void UseAspects(IComposable composable)
 Composition are also available on Unity `MonoBehaviours `. Deriving from the abstract `MonoComposable` class enables using composition on Unity objects. `MonoComposable` class handles creation of composable, deriving classes only responsible for implementing the `GetAspects()` absrtact method to assign aspects.
 
 ```CSharp
-public class FooView : MonoComposable
+public class FooMonoComposable : MonoComposable
 {
-    public int foo;
-    
-    public string bar;
-    
-    public Vector3 baz;
-        
-    protected override IAspect[] GetAspects() // Deriving class implements this method.
-    {
-        IAspect[] aspects = ArrayPool<IAspect>.GetPool(3).Get();
-        aspects[0] = new FooAspect(foo);
-        aspects[1] = new BarAspect(bar);
-        aspects[2] = new BazAspect(baz);
-        return aspects;
-    }
+    private int _value = 12;
 
-    public void UseFoo() 
+    protected override IAspect[] GetAspects() // Deriving class implements GetAspects method.
     {
-        // Composition field is available on MonoComposable classes.
-        // All features of Composition is available with this field; 
-        FooAspect fooAspect = Composition.GetAspect<FooAspect>(); 
-        
-        DoOtherThing(fooAspect.Value);
+        IAspect[] aspects = ArrayPool<IAspect>.GetPool(1).Get();
+        aspects[0] = new FooAspect(_value);
+        return aspects;
     }
 }
 ```
