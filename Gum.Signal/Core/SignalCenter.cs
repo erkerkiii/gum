@@ -26,7 +26,7 @@ namespace Gum.Signal.Core
 				{
 					Entry entry = _entries[index];
 
-					if ((Action<T>)entry.Delegate == action)
+					if (entry.Delegate as Action<T> == action)
 					{
 						_entries.Remove(entry);
 					}

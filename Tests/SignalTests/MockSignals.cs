@@ -9,4 +9,14 @@
 			Value = value;
 		}
 	}
+	
+	public readonly struct BarSignal
+	{
+		public readonly int Value;
+
+		public BarSignal(int value)
+		{
+			Value = value;
+		}
+	}
 }

@@ -29,24 +29,27 @@ namespace Tests.SignalTests
 		[Test]
 		public void Unsubscribe()
 		{
-			void Action(FooSignal _) { }
+			void BarAction(BarSignal _) { }
+			void FooAction(FooSignal _) { }
 
-			_signalCenter.Subscribe<FooSignal>(Action);
-			Assert.IsTrue(_signalCenter.Exists<FooSignal>(Action));
-			_signalCenter.Unsubscribe<FooSignal>(Action);
-			Assert.IsFalse(_signalCenter.Exists<FooSignal>(Action));
+			_signalCenter.Subscribe<BarSignal>(BarAction);
+			_signalCenter.Subscribe<FooSignal>(FooAction);
+			Assert.IsTrue(_signalCenter.Exists<FooSignal>(FooAction));
+			_signalCenter.Unsubscribe<FooSignal>(FooAction);
+			Assert.IsFalse(_signalCenter.Exists<FooSignal>(FooAction));
 		}
 		
 		[Test]
 		public void Subscribe_And_Fire()
 		{
-			void Action(FooSignal fooSignal)
+			void FooAction(FooSignal fooSignal)
 			{
 				Assert.AreEqual(VALUE, fooSignal.Value);
 			}
+			void BarAction(BarSignal _) { }
 			
-			_signalCenter.Subscribe<FooSignal>(Action);
-			Assert.IsTrue(_signalCenter.Exists<FooSignal>(Action));
+			_signalCenter.Subscribe<BarSignal>(BarAction);
+			Assert.IsTrue(_signalCenter.Exists<FooSignal>(FooAction));
 
 			_signalCenter.Fire(new FooSignal(VALUE));
 		}
