@@ -49,6 +49,7 @@ namespace Tests.SignalTests
 			void BarAction(BarSignal _) { }
 			
 			_signalCenter.Subscribe<BarSignal>(BarAction);
+			_signalCenter.Subscribe<FooSignal>(FooAction);
 			Assert.IsTrue(_signalCenter.Exists<FooSignal>(FooAction));
 
 			_signalCenter.Fire(new FooSignal(VALUE));
