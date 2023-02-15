@@ -44,7 +44,7 @@ Add this to the ```Packages\manifest.json```
 Dependencies
 ```
  "dependencies": {
-    "com.erkerkiii.gum":  "1.0.8"
+    "com.erkerkiii.gum":  "1.0.11"
     }
 ```
 
@@ -214,6 +214,24 @@ public void UseAspects(IComposable composable)
     using (Composition composition = composable.GetComposition())
     {
         BarAspect barAspect = _composition.GetAspect<BarAspect>();				
+    }
+}
+```
+
+### MonoComposable 
+
+Composition are also available on Unity `MonoBehaviours `. Deriving from the abstract `MonoComposable` class enables using composition on Unity objects. `MonoComposable` class handles creation of composable, deriving classes only responsible for implementing the `GetAspects()` absrtact method to assign aspects.
+
+```CSharp
+public class FooMonoComposable : MonoComposable
+{
+    private int _value = 12;
+
+    protected override IAspect[] GetAspects() // Deriving class implements GetAspects method.
+    {
+        IAspect[] aspects = ArrayPool<IAspect>.GetPool(1).Get();
+        aspects[0] = new FooAspect(_value);
+        return aspects;
     }
 }
 ```
