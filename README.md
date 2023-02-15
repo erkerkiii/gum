@@ -44,7 +44,7 @@ Add this to the ```Packages\manifest.json```
 Dependencies
 ```
  "dependencies": {
-    "com.erkerkiii.gum":  "1.0.12"
+    "com.erkerkiii.gum":  "1.0.13"
     }
 ```
 
