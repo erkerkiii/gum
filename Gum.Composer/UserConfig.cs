@@ -35,7 +35,6 @@ namespace Gum.Composer
 			
 			string[] directories =
 				Directory.GetDirectories(directory, FOLDER_SEARCH_PATTERN, SearchOption.AllDirectories);
-			Console.WriteLine(directory);
 			if (directories.Length > 0)
 			{
 				foundDirectory = directories[0];
