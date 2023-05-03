@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gum.Composer", "Gum.Compose
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gum.Signal", "Gum.Signal\Gum.Signal.csproj", "{6DA54680-9E54-4E6D-A1EC-961C816B56D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gum.DI", "Gum.DI\Gum.DI.csproj", "{3361A2E8-035D-4686-A299-34ECEDE5634E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{6DA54680-9E54-4E6D-A1EC-961C816B56D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DA54680-9E54-4E6D-A1EC-961C816B56D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DA54680-9E54-4E6D-A1EC-961C816B56D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3361A2E8-035D-4686-A299-34ECEDE5634E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3361A2E8-035D-4686-A299-34ECEDE5634E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3361A2E8-035D-4686-A299-34ECEDE5634E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3361A2E8-035D-4686-A299-34ECEDE5634E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
