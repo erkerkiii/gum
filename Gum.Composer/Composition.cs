@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Gum.Composer.Exception;
-using Gum.Composer.Generated;
 using Gum.Composer.Internal;
 using Gum.Pooling;
 using Gum.Pooling.Collections;

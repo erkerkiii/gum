@@ -37,9 +37,9 @@ namespace Gum.Composer.CodeGen
 		                                     TAB + TAB + LINE + CTOR_CONTENT +
 		                                     LINE + TAB + TAB + "}";
 		private const string ASPECT_TYPE_TEMPLATE =
-			TAB + TAB + "public const " + ASPECT_TYPE + " ASPECT_TYPE = " + ASPECT_TYPE + "." + OBJECT_NAME + ";" +
+			TAB + TAB + "public static readonly " + NAMESPACE + "." + ASPECT_TYPE + " ASPECT_TYPE = " + "(int)" + ASPECT_TYPE + "." + OBJECT_NAME + ";" +
 			LINE + LINE +
-			TAB + TAB + "public " + ASPECT_TYPE + " Type => ASPECT_TYPE;" + LINE + LINE;
+			TAB + TAB + "public " + NAMESPACE + "." + ASPECT_TYPE + " Type => ASPECT_TYPE;" + LINE + LINE;
 		private const string FIELD_TEMPLATE =
 			TAB + TAB + "public readonly " + TYPE + " " + FIELD_NAME + ";" + LINE + LINE;
 
@@ -57,7 +57,9 @@ namespace Gum.Composer.CodeGen
 			{
 				string aspectName = aspectPrototype.Name;
 				bodyStringBuilder.Append(ASPECT_TYPE_TEMPLATE
-					.Replace(OBJECT_NAME, aspectName));
+					.Replace(OBJECT_NAME, aspectName)
+					.Replace(NAMESPACE, UserConfig.NAMESPACE));
+				
 				int argCounter = 0;
 				foreach (KeyValuePair<string, string> kvp in aspectPrototype.Fields)
 				{
@@ -65,7 +67,8 @@ namespace Gum.Composer.CodeGen
 					string type = kvp.Value;
 					bodyStringBuilder.Append(FIELD_TEMPLATE
 						.Replace(TYPE, type)
-						.Replace(FIELD_NAME, fieldName));
+						.Replace(FIELD_NAME, fieldName)
+						.Replace(NAMESPACE, UserConfig.NAMESPACE));
 
 					string argName = $"arg{argCounter}";
 					argsStringBuilder.Append($"{type} {argName}, ");
