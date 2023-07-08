@@ -125,7 +125,7 @@ namespace Gum.Composer.Unity.Editor
                 TypeNameValidationResult typeNameValidationResult = ValidateTypeName(out string fullName);
                 if (typeNameValidationResult != TypeNameValidationResult.Success)
                 {
-                    Debug.LogError(
+                        Debug.LogError(
                         $"Error while trying to add type: {_typeName} Error code: {typeNameValidationResult}");
                     return;
                 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Gum.Composer.Generated;
 using Gum.Core.Utility;
+using Gum.Composer;
 
 namespace Gum.Composer.Internal
 {
