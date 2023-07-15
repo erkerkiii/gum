@@ -9,10 +9,11 @@ namespace Gum.Composer.CodeGen
 	public static class CompositionCodeGenerator
 	{
 		private const string ASPECTS_FILE = "Aspects.cs";
-		private const string ASPECT_TYPE_FILE = "AspectType.cs";
+		private const string ASPECT_CATALOG_FILE = "AspectTypeCatalog.cs";
 		private const string TAB = "\t";
 		private const string LINE = "\n";
 		private const string ASPECT_TYPE = "AspectType";
+		private const string ASPECT_CATALOG_CLASS = "AspectTypeCatalog";
 		private const string TYPE = "$type";
 		private const string FIELD_NAME = "$fieldName";
 		private const string NAMESPACE = "$namespace";
@@ -20,10 +21,11 @@ namespace Gum.Composer.CodeGen
 		private const string CONTENT = "$content";
 		private const string ARGS = "$args";
 		private const string CTOR_CONTENT = "$ctorContent";
+		private const string ASPECT_ORDER = "$aspectOrder";
 		private const string NAMESPACE_TEMPLATE = "namespace " + NAMESPACE + ".Generated";
-		private const string ENUM_TEMPLATE = NAMESPACE_TEMPLATE +
+		private const string ASPECT_CATALOG_TEMPLATE = NAMESPACE_TEMPLATE +
 		                                     LINE + "{" +
-		                                     LINE + TAB + "public enum " + ASPECT_TYPE +
+		                                     LINE + TAB + "public static class " + ASPECT_CATALOG_CLASS +
 		                                     LINE + TAB + "{" +
 		                                     LINE + CONTENT +
 		                                     TAB + "}"+
@@ -37,28 +39,30 @@ namespace Gum.Composer.CodeGen
 		                                     TAB + TAB + LINE + CTOR_CONTENT +
 		                                     LINE + TAB + TAB + "}";
 		private const string ASPECT_TYPE_TEMPLATE =
-			TAB + TAB + "public static readonly " + NAMESPACE + "." + ASPECT_TYPE + " ASPECT_TYPE = " + "(int)" + ASPECT_TYPE + "." + OBJECT_NAME + ";" +
+			TAB + TAB + "public static readonly " + ASPECT_TYPE + " ASPECT_TYPE = " + ASPECT_CATALOG_CLASS + "." + OBJECT_NAME + ";" +
 			LINE + LINE +
-			TAB + TAB + "public " + NAMESPACE + "." + ASPECT_TYPE + " Type => ASPECT_TYPE;" + LINE + LINE;
+			TAB + TAB + "public " + ASPECT_TYPE + " Type => ASPECT_TYPE;" + LINE + LINE;
 		private const string FIELD_TEMPLATE =
 			TAB + TAB + "public readonly " + TYPE + " " + FIELD_NAME + ";" + LINE + LINE;
-
+		private const string ASPECT_CATALOG_FIELD_TEMPLATE =
+			TAB + TAB + "public const System.Int32 " + TYPE + " = " + ASPECT_ORDER + ";" + LINE;
+		
 		public static void Run()
 		{
+			int createdAspectIndex = 0;
+
 			StringBuilder aspectFileStringBuilder = new StringBuilder();
 			StringBuilder bodyStringBuilder = new StringBuilder();
 			StringBuilder argsStringBuilder = new StringBuilder();
-			StringBuilder aspectTypeEnumStringBuilder = new StringBuilder();
+			StringBuilder aspectTypeCatalogStringBuilder = new StringBuilder();
 			StringBuilder ctorStringBuilder = new StringBuilder();
-
 			aspectFileStringBuilder.Append(NAMESPACE_TEMPLATE.Replace(NAMESPACE, UserConfig.NAMESPACE));
 			aspectFileStringBuilder.Append(LINE + "{");
 			foreach (AspectPrototype aspectPrototype in AspectFileReader.ReadAspects())
 			{
 				string aspectName = aspectPrototype.Name;
 				bodyStringBuilder.Append(ASPECT_TYPE_TEMPLATE
-					.Replace(OBJECT_NAME, aspectName)
-					.Replace(NAMESPACE, UserConfig.NAMESPACE));
+					.Replace(OBJECT_NAME, aspectName));
 				
 				int argCounter = 0;
 				foreach (KeyValuePair<string, string> kvp in aspectPrototype.Fields)
@@ -67,8 +71,7 @@ namespace Gum.Composer.CodeGen
 					string type = kvp.Value;
 					bodyStringBuilder.Append(FIELD_TEMPLATE
 						.Replace(TYPE, type)
-						.Replace(FIELD_NAME, fieldName)
-						.Replace(NAMESPACE, UserConfig.NAMESPACE));
+						.Replace(FIELD_NAME, fieldName));
 
 					string argName = $"arg{argCounter}";
 					argsStringBuilder.Append($"{type} {argName}, ");
@@ -85,8 +88,11 @@ namespace Gum.Composer.CodeGen
 					.Replace(OBJECT_NAME, $"{aspectName}Aspect")
 					.Replace(CONTENT, bodyStringBuilder.ToString()));
 
-				aspectTypeEnumStringBuilder.Append($"{TAB + TAB}{aspectName},{LINE}");
-
+				aspectTypeCatalogStringBuilder.Append(ASPECT_CATALOG_FIELD_TEMPLATE
+					.Replace(TYPE, aspectName)
+					.Replace(ASPECT_ORDER, createdAspectIndex.ToString()));
+				createdAspectIndex++;
+				
 				bodyStringBuilder.Clear();
 				argsStringBuilder.Clear();
 				ctorStringBuilder.Clear();
@@ -94,15 +100,15 @@ namespace Gum.Composer.CodeGen
 
 			aspectFileStringBuilder.Append(LINE + "}");
 
-			string aspectTypeEnumFile = $@"{UserConfig.OutputDirectoryPath}\{ASPECT_TYPE_FILE}";
+			string aspectCatalogClassFile = $@"{UserConfig.OutputDirectoryPath}\{ASPECT_CATALOG_FILE}";
 			string aspectsFile = $@"{UserConfig.OutputDirectoryPath}\{ASPECTS_FILE}";
 
-			FilePathHelper.EnsureFilePath(aspectTypeEnumFile);
+			FilePathHelper.EnsureFilePath(aspectCatalogClassFile);
 			FilePathHelper.EnsureFilePath(aspectsFile);
 
-			File.WriteAllText(aspectTypeEnumFile, ENUM_TEMPLATE
+			File.WriteAllText(aspectCatalogClassFile, ASPECT_CATALOG_TEMPLATE
 				.Replace(NAMESPACE, UserConfig.NAMESPACE)
-				.Replace(CONTENT, aspectTypeEnumStringBuilder.ToString()));
+				.Replace(CONTENT, aspectTypeCatalogStringBuilder.ToString()));
 			File.WriteAllText(aspectsFile, aspectFileStringBuilder.ToString());
 		}
 	}
