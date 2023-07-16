@@ -9,9 +9,9 @@ using Gum.Pooling.Collections;
 
 namespace Gum.DI.Container
 {
-	public class DiContainer : IDiContainer
+	public sealed class DiContainer : IDiContainer, IInstantiator
 	{
-		private readonly DiContainer[] _parentContainers;
+		private readonly DiContainer _parentContainer;
 
 		private readonly Dictionary<Type, BindingInfo> _bindings = new Dictionary<Type, BindingInfo>(32);
 		
@@ -21,23 +21,19 @@ namespace Gum.DI.Container
 		{
 		}
 
-		public DiContainer(DiContainer[] parentContainers)
+		public DiContainer(DiContainer parentContainer)
 		{
-			_parentContainers = parentContainers;
+			_parentContainer = parentContainer;
 		}
 
-		internal DiContainer CreateSubContainer()
+		public DiContainer CreateSubContainer()
 		{
-			int parentContainerCount = (_parentContainers?.Length ?? 0) + 1;
-			
-			DiContainer[] parentContainers = new DiContainer[parentContainerCount];
-			if (_parentContainers != null)
-			{
-				Array.Copy(_parentContainers, parentContainers, parentContainerCount - 1);
-			}
-			parentContainers[parentContainerCount - 1] = this;
-			
-			return new DiContainer(parentContainers);
+			return new DiContainer(this);
+		}
+		
+		public DiContainer GetParentContainer()
+		{
+			return _parentContainer;
 		}
 		
 		public ObjectTypeBuilder<TBinding> Bind<TBinding>()
@@ -71,19 +67,21 @@ namespace Gum.DI.Container
 			return (T)Resolve(typeof(T));
 		}
 
+		public bool HasBindingFor(Type type)
+		{
+			return _bindings.ContainsKey(type);
+		}
+
 		private object Resolve(Type type)
 		{
-			if (!_bindings.ContainsKey(type))
+			if (!HasBindingFor(type))
 			{
-				if (_parentContainers != null)
+				if (_parentContainer == null)
 				{
-					for (var index = 0; index < _parentContainers.Length; index++)
-					{
-						return _parentContainers[index].Resolve(type);
-					}
+					throw new BindingNotFoundException($"No binding found for: {type.Name}");
 				}
-				
-				throw new BindingNotFoundException($"No binding found for: {type.Name}");
+
+				return _parentContainer.Resolve(type);
 			}
 
 			BindingInfo bindingInfo = _bindings[type];
@@ -92,9 +90,7 @@ namespace Gum.DI.Container
 				return _singleInstances[type];
 			}
 
-			object[] dependencies = GetDependenciesOf(bindingInfo.ObjectType);
-			object instance = Activator.CreateInstance(bindingInfo.ObjectType, args: dependencies);
-			InjectInto(instance);
+			object instance = Instantiate(bindingInfo.ObjectType);
 
 			if (bindingInfo.BindingStrategy == BindingStrategy.Single)
 			{
@@ -160,6 +156,19 @@ namespace Gum.DI.Container
 
 				return dependencies.ToArray();
 			}
+		}
+		
+		public T Instantiate<T>()
+		{
+			return (T)Instantiate(typeof(T));
+		}
+
+		public object Instantiate(Type type)
+		{
+			object[] dependencies = GetDependenciesOf(type);
+			object instance = Activator.CreateInstance(type, args: dependencies);
+			InjectInto(instance);
+			return instance;
 		}
 	}
 }

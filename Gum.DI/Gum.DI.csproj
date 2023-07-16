@@ -43,6 +43,7 @@
         <Compile Include="Binding\BindingStrategy.cs" />
         <Compile Include="Binding\PendingBindingInfo.cs" />
         <Compile Include="CompilerServices\Attribute\InjectAttribute.cs" />
+        <Compile Include="Container\IInstantiator.cs" />
         <Compile Include="Internal\TypeCache.cs" />
         <Compile Include="Container\DiContainer.cs" />
         <Compile Include="Container\IDiContainer.cs" />

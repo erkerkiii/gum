@@ -15,11 +15,12 @@
 			return new BindingStrategyBuilder(_pendingBindingInfo);
 		}
 
-		public BindingStrategyBuilder FromInstance<TObject>(TObject instance) where TObject : TBinding
+		public void FromInstance<TObject>(TObject instance) where TObject : TBinding
 		{
 			_pendingBindingInfo.objectType = typeof(TObject);
 			_pendingBindingInfo.instance = instance;
-			return new BindingStrategyBuilder(_pendingBindingInfo);
+			_pendingBindingInfo.bindingStrategy = BindingStrategy.Single;
+			_pendingBindingInfo.CompleteBinding();
 		}
 	}
 
@@ -32,22 +33,44 @@
 			_pendingBindingInfo = pendingBindingInfo;
 		}
 
-		public void AsSingle()
+		public InstantiationStrategyBuilder AsSingle()
 		{
 			_pendingBindingInfo.bindingStrategy = BindingStrategy.Single;
-			_pendingBindingInfo.diContainer.CompleteBinding(_pendingBindingInfo);
+			return new InstantiationStrategyBuilder(_pendingBindingInfo);
 		}
 		
-		public void AsTransient()
+		public InstantiationStrategyBuilder AsTransient()
 		{
 			_pendingBindingInfo.bindingStrategy = BindingStrategy.Transient;
-			_pendingBindingInfo.diContainer.CompleteBinding(_pendingBindingInfo);
+			return new InstantiationStrategyBuilder(_pendingBindingInfo);
 		}
 		
-		public void AsCached()
+		public InstantiationStrategyBuilder AsCached()
 		{
 			_pendingBindingInfo.bindingStrategy = BindingStrategy.Cached;
-			_pendingBindingInfo.diContainer.CompleteBinding(_pendingBindingInfo);
+			return new InstantiationStrategyBuilder(_pendingBindingInfo);
+		}
+	}
+	
+	public ref struct InstantiationStrategyBuilder
+	{
+		private PendingBindingInfo _pendingBindingInfo;
+		
+		internal InstantiationStrategyBuilder(PendingBindingInfo pendingBindingInfo)
+		{
+			_pendingBindingInfo = pendingBindingInfo;
+		}
+
+		public void Lazy()
+		{
+			_pendingBindingInfo.isLazy = true;
+			_pendingBindingInfo.CompleteBinding();
+		}
+		
+		public void Eager()
+		{
+			_pendingBindingInfo.isLazy = false;
+			_pendingBindingInfo.CompleteBinding();
 		}
 	}
 }

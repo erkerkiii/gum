@@ -16,6 +16,38 @@ namespace Tests.DITests
 		}
 
 		[Test]
+		public void Creates_SubContainers()
+		{
+			DiContainer subContainer = _diContainer
+				.CreateSubContainer()
+				.CreateSubContainer()
+				.CreateSubContainer();
+
+			Assert.AreSame(_diContainer, subContainer.GetParentContainer().GetParentContainer().GetParentContainer());
+		}
+
+		[Test]
+		public void Creates_SubContainers_And_Resolves()
+		{
+			DiContainer first = _diContainer.CreateSubContainer();
+			DiContainer second = first.CreateSubContainer();
+			DiContainer third = second.CreateSubContainer();
+			
+			_diContainer.Bind<IFoo>().To<Foo>().AsSingle().Lazy();
+			first.Bind<IBar>().To<Bar>().AsSingle().Lazy();
+			second.Bind<Baz>().To<Baz>().AsSingle().Lazy();
+			third.Bind<Qux>().To<Qux>().AsSingle().Lazy();
+			
+			Qux qux = third.Resolve<Qux>();
+
+			Assert.NotNull(qux);
+			Assert.NotNull(qux.GetFoo());
+			Assert.NotNull(qux.Baz);
+			Assert.NotNull(qux.Baz.GetBar());
+			Assert.NotNull(qux.Baz.GetBar().GetFoo());
+		}
+
+		[Test]
 		public void Bind_AsSingle()
 		{
 			_diContainer.Bind<IFoo>().To<Foo>().AsSingle();
@@ -27,18 +59,18 @@ namespace Tests.DITests
 		{
 			Assert.Throws<BindingAlreadyExistsException>(() =>
 			{
-				_diContainer.Bind<IFoo>().To<Foo>().AsSingle();
-				_diContainer.Bind<IFoo>().To<Foo>().AsSingle();
+				_diContainer.Bind<IFoo>().To<Foo>().AsSingle().Lazy();
+				_diContainer.Bind<IFoo>().To<Foo>().AsSingle().Lazy();
 			});
 		}
 		
 		[Test]
 		public void DiContainer_Resolve()
 		{
-			_diContainer.Bind<IFoo>().To<Foo>().AsSingle();
-			_diContainer.Bind<IBar>().To<Bar>().AsSingle();
-			_diContainer.Bind<Baz>().To<Baz>().AsSingle();
-			_diContainer.Bind<Qux>().To<Qux>().AsSingle();
+			_diContainer.Bind<IFoo>().To<Foo>().AsSingle().Lazy();
+			_diContainer.Bind<IBar>().To<Bar>().AsSingle().Lazy();
+			_diContainer.Bind<Baz>().To<Baz>().AsSingle().Lazy();
+			_diContainer.Bind<Qux>().To<Qux>().AsSingle().Lazy();
 
 			Qux qux = _diContainer.Resolve<Qux>();
 
@@ -52,8 +84,8 @@ namespace Tests.DITests
 		[Test]
 		public void DiContainer_Resolve_FromInstance()
 		{
-			_diContainer.Bind<IFoo>().FromInstance(new Foo()).AsSingle();
-			_diContainer.Bind<IBar>().To<Bar>().AsSingle();
+			_diContainer.Bind<IFoo>().FromInstance(new Foo());
+			_diContainer.Bind<IBar>().To<Bar>().AsSingle().Lazy();
 
 			IBar bar = _diContainer.Resolve<IBar>();
 
@@ -66,7 +98,7 @@ namespace Tests.DITests
 		{
 			Assert.Throws<BindingNotFoundException>(() =>
 			{
-				_diContainer.Bind<IBar>().To<Bar>().AsSingle();
+				_diContainer.Bind<IBar>().To<Bar>().AsSingle().Lazy();
 				_diContainer.Resolve<IBar>();
 			});
 		}
