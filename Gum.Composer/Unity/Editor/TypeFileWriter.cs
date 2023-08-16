@@ -27,8 +27,8 @@ namespace Gum.Composer.Unity.Editor
 
             typeFileStringBuilder.Append(bodyStringBuilder.ToString());
 
-            string typeFilePath = $@"{UserConfig.OutputDirectoryPath}\{TypeFileConfig.TYPES_FILE}";
-
+            string typeFilePath = Path.Combine(PathConfig.GetOutputDirectoryPath(), TypeFileConfig.TYPES_FILE);
+            
             FilePathHelper.EnsureFilePath(typeFilePath);
             File.WriteAllText(typeFilePath, typeFileStringBuilder.ToString());
         }

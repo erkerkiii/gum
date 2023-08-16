@@ -41,7 +41,7 @@ namespace Gum.Composer.Unity.Editor
                 }
                 
                 aspectStringBuilder.Replace(BODY, bodyStringBuilder.ToString());
-                string aspectFile = $@"{UserConfig.AspectsDirectoryPath}\{aspectName + FILE_EXTENTION}";
+                string aspectFile = Path.Combine(PathConfig.GetAspectsDirectoryPath(), aspectName + FILE_EXTENTION);
                 FilePathHelper.EnsureFilePath(aspectFile);
                 File.WriteAllText(aspectFile, aspectStringBuilder.ToString());
             }
