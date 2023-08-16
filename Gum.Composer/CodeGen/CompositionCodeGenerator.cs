@@ -56,7 +56,7 @@ namespace Gum.Composer.CodeGen
 			StringBuilder argsStringBuilder = new StringBuilder();
 			StringBuilder aspectTypeCatalogStringBuilder = new StringBuilder();
 			StringBuilder ctorStringBuilder = new StringBuilder();
-			aspectFileStringBuilder.Append(NAMESPACE_TEMPLATE.Replace(NAMESPACE, UserConfig.NAMESPACE));
+			aspectFileStringBuilder.Append(NAMESPACE_TEMPLATE.Replace(NAMESPACE, PathConfig.NAMESPACE));
 			aspectFileStringBuilder.Append(LINE + "{");
 			foreach (AspectPrototype aspectPrototype in AspectFileReader.ReadAspects())
 			{
@@ -100,14 +100,14 @@ namespace Gum.Composer.CodeGen
 
 			aspectFileStringBuilder.Append(LINE + "}");
 
-			string aspectCatalogClassFile = $@"{UserConfig.OutputDirectoryPath}\{ASPECT_CATALOG_FILE}";
-			string aspectsFile = $@"{UserConfig.OutputDirectoryPath}\{ASPECTS_FILE}";
+			string aspectCatalogClassFile = Path.Combine(PathConfig.GetOutputDirectoryPath(), ASPECT_CATALOG_FILE);
+			string aspectsFile = Path.Combine(PathConfig.GetOutputDirectoryPath(), ASPECTS_FILE);
 
 			FilePathHelper.EnsureFilePath(aspectCatalogClassFile);
 			FilePathHelper.EnsureFilePath(aspectsFile);
 
 			File.WriteAllText(aspectCatalogClassFile, ASPECT_CATALOG_TEMPLATE
-				.Replace(NAMESPACE, UserConfig.NAMESPACE)
+				.Replace(NAMESPACE, PathConfig.NAMESPACE)
 				.Replace(CONTENT, aspectTypeCatalogStringBuilder.ToString()));
 			File.WriteAllText(aspectsFile, aspectFileStringBuilder.ToString());
 		}
