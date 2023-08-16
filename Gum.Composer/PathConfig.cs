@@ -1,10 +1,9 @@
 ﻿using System.IO;
 using Gum.Core.Assert;
-using UnityEngine;
 
 namespace Gum.Composer
 {
-	internal static class PathConfig
+	public static class PathConfig
 	{
 		private static readonly string ProjectDirectory = GetProjectDirectory(Directory.GetCurrentDirectory());
 
