@@ -40,9 +40,9 @@ namespace Gum.Composer.Unity.Editor
 
         private static string GetTypeText()
         {
-            FilePathHelper.EnsureFilePath($@"{UserConfig.OutputDirectoryPath}\{TypeFileConfig.TYPES_FILE}");
+            FilePathHelper.EnsureFilePath(Path.Combine(PathConfig.GetOutputDirectoryPath(), TypeFileConfig.TYPES_FILE));
 
-            string[] files = Directory.GetFiles(UserConfig.OutputDirectoryPath, SEARCH_PATTERN,
+            string[] files = Directory.GetFiles(PathConfig.GetOutputDirectoryPath(), SEARCH_PATTERN,
                 SearchOption.AllDirectories);
             string text = File.ReadAllText(files[0]);
             return text;

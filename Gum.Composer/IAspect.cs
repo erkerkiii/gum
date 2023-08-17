@@ -1,6 +1,4 @@
-﻿using Gum.Composer.Generated;
-
-namespace Gum.Composer
+﻿namespace Gum.Composer
 {
 	public interface IAspect
 	{

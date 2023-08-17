@@ -44,7 +44,7 @@ Add this to the ```Packages\manifest.json```
 Dependencies
 ```
  "dependencies": {
-    "com.erkerkiii.gum":  "1.0.12"
+    "com.erkerkiii.gum":  "1.0.17"
     }
 ```
 
@@ -75,7 +75,7 @@ public class Foo : IPoolable
 {
     public event Action OnReturnToPoolRequested;
 
-    public Reset()
+    public void Reset()
     {
         //reset object's values   
     }

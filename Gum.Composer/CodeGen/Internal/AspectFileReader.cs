@@ -10,7 +10,7 @@ namespace Gum.Composer.CodeGen.Internal
 
 		public static IEnumerable<AspectPrototype> ReadAspects()
 		{
-			string[] files = Directory.GetFiles(UserConfig.AspectsDirectoryPath, SEARCH_PATTERN, SearchOption.AllDirectories);
+			string[] files = Directory.GetFiles(PathConfig.GetAspectsDirectoryPath(), SEARCH_PATTERN, SearchOption.AllDirectories);
 			List<AspectPrototype> aspectPrototypes = new List<AspectPrototype>();
 			for (int index = 0; index < files.Length; index++)
 			{
