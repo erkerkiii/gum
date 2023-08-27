@@ -271,12 +271,6 @@ namespace Gum.Composer.Unity.Editor
                     return;
                 }
 
-                if (_fieldNameTypeMap.Count <= 0)
-                {
-                    Debug.LogError("Error while generating aspect! In order to generate aspect, least one field is required.");
-                    return;
-                }
-
                 AspectPrototype aspectPrototype = new AspectPrototype(_acceptedAspectName, _fieldNameTypeMap);
                 List<AspectPrototype> aspectPrototypes = new List<AspectPrototype>();
                 aspectPrototypes.Add(aspectPrototype);
