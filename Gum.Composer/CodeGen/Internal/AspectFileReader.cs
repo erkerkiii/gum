@@ -32,11 +32,11 @@ namespace Gum.Composer.CodeGen.Internal
 				return false;
 			}
 
-			string[] splittedText = text.Split(Keywords.BOF);
-			string name = splittedText[0].Replace(Keywords.ASPECT_FILE, "").Trim();
+			string[] splitText = text.Split(Keywords.BOF);
+			string name = splitText[0].Replace(Keywords.ASPECT_FILE, "").Trim();
 			Dictionary<string, string> fields = new Dictionary<string, string>();
 			
-			char[] chars = splittedText[1].ToCharArray();
+			char[] chars = splitText[1].ToCharArray();
 			bool isReadingField = false;
 			bool isReadingFieldName = false;
 			bool isReadingTypeName = false;
