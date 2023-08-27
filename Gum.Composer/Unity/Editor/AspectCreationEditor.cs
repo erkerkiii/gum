@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gum.Composer.CodeGen;
-using Gum.Composer.CodeGen.Internal;
 using Gum.Core.Utility;
 using UnityEditor;
+using UnityEditor.Compilation;
 using UnityEngine;
 
 namespace Gum.Composer.Unity.Editor
@@ -106,7 +106,7 @@ namespace Gum.Composer.Unity.Editor
             EditorGUILayout.BeginHorizontal("BoldLabel");
             EditorGUILayout.LabelField(type);
 
-            if (GUILayout.Button("x", "ToolbarSeachCancelButton"))
+            if (GUILayout.Button("-"))
             {
                 AvailableTypesAsString.Remove(type);
                 TypeFileWriter.WriteTypes(AvailableTypesAsString);
@@ -228,7 +228,7 @@ namespace Gum.Composer.Unity.Editor
             EditorGUILayout.LabelField(fieldType);
             EditorGUILayout.LabelField(fieldName);
 
-            if (GUILayout.Button("x", "ToolbarSeachCancelButton"))
+            if (GUILayout.Button("-"))
             {
                 _fieldNameTypeMap.Remove(fieldName);
             }
@@ -283,9 +283,25 @@ namespace Gum.Composer.Unity.Editor
 
                 AspectFileWriter.WriteAspects(aspectPrototypes);
                 CompositionCodeGenerator.Run();
+                
+                TriggerCodeCompilation();
+                
+                Clear();
             }
         }
+        
+        private static void TriggerCodeCompilation()
+        {
+            CompilationPipeline.RequestScriptCompilation();
+            AssetDatabase.Refresh();
+        }
 
+        private void Clear()
+        {
+            _acceptedAspectName = string.Empty;
+            _fieldNameTypeMap.Clear();
+        }
+        
         private bool IsStringEmpty(string s) => s == string.Empty;
 
         private enum TypeNameValidationResult
