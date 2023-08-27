@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Gum.Core.Utility;
-using Gum.Composer;
 
 namespace Gum.Composer.Internal
 {
