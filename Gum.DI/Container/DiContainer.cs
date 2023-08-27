@@ -14,7 +14,7 @@ namespace Gum.DI.Container
 		private readonly DiContainer _parentContainer;
 
 		private readonly Dictionary<Type, BindingInfo> _bindings = new Dictionary<Type, BindingInfo>(32);
-		
+
 		private readonly Hashtable _singleInstances = new Hashtable(32);
 
 		public DiContainer()
@@ -30,12 +30,12 @@ namespace Gum.DI.Container
 		{
 			return new DiContainer(this);
 		}
-		
+
 		public DiContainer GetParentContainer()
 		{
 			return _parentContainer;
 		}
-		
+
 		public ObjectTypeBuilder<TBinding> Bind<TBinding>()
 		{
 			return new ObjectTypeBuilder<TBinding>(new PendingBindingInfo()
@@ -48,7 +48,7 @@ namespace Gum.DI.Container
 			{
 				throw new BindingAlreadyExistsException($"Binding type already exists: {bindingInfo.BindingType.Name}");
 			}
-			
+
 			_bindings.Add(bindingInfo.BindingType, bindingInfo);
 
 			if (bindingInfo.BindingStrategy == BindingStrategy.Single && bindingInfo.Instance != null)
@@ -56,7 +56,7 @@ namespace Gum.DI.Container
 				AddSingleInstance(bindingInfo.BindingType, bindingInfo.Instance);
 			}
 		}
-		
+
 		private void AddSingleInstance(Type type, object instance)
 		{
 			_singleInstances.Add(type, instance);
@@ -108,7 +108,7 @@ namespace Gum.DI.Container
 			FieldInfo[] fieldInfosToInject = typeCache.FieldInfosToInject;
 			MethodInfo[] methodInfosToInject = typeCache.MethodInfosToInject;
 			PropertyInfo[] propertyInfosToInject = typeCache.PropertyInfosToInject;
-			
+
 			for (int index = 0; index < fieldInfosToInject.Length; index++)
 			{
 				FieldInfo fieldInfo = fieldInfosToInject[index];
@@ -133,31 +133,28 @@ namespace Gum.DI.Container
 		{
 			TypeCache typeCache = TypeCache.Get(type);
 			ParameterInfo[] parameterInfos = typeCache.DefaultConstructorInfo.GetParameters();
-			using (PooledList<object> dependencies = PooledList<object>.Get())
-			{
-				for (int index = 0; index < parameterInfos.Length; index++)
-				{
-					dependencies.Add(Resolve(parameterInfos[index].ParameterType));
-				}
+			object[] dependencies = new object[parameterInfos.Length];
 
-				return dependencies.ToArray();
+			for (int index = 0; index < parameterInfos.Length; index++)
+			{
+				dependencies[index] = Resolve(parameterInfos[index].ParameterType);
 			}
+
+			return dependencies;
 		}
-		
+
 		private object[] GetDependenciesOf(MethodInfo methodInfo)
 		{
 			ParameterInfo[] parameterInfos = methodInfo.GetParameters();
-			using (PooledList<object> dependencies = PooledList<object>.Get())
+			object[] dependencies = new object[parameterInfos.Length];
+			for (int index = 0; index < parameterInfos.Length; index++)
 			{
-				for (int index = 0; index < parameterInfos.Length; index++)
-				{
-					dependencies.Add(Resolve(parameterInfos[index].ParameterType));
-				}
-
-				return dependencies.ToArray();
+				dependencies[index] = Resolve(parameterInfos[index].ParameterType);
 			}
+
+			return dependencies;
 		}
-		
+
 		public T Instantiate<T>()
 		{
 			return (T)Instantiate(typeof(T));
