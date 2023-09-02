@@ -9,7 +9,7 @@ using Gum.Pooling.Collections;
 
 namespace Gum.DI.Container
 {
-	public sealed class DiContainer : IDiContainer, IInstantiator
+	public sealed class DiContainer : IDiContainer, IInstantiator, IInjector
 	{
 		private readonly DiContainer _parentContainer;
 
@@ -67,12 +67,12 @@ namespace Gum.DI.Container
 			return (T)Resolve(typeof(T));
 		}
 
-		public bool HasBindingFor(Type type)
+		private bool HasBindingFor(Type type)
 		{
 			return _bindings.ContainsKey(type);
 		}
 
-		private object Resolve(Type type)
+		public object Resolve(Type type)
 		{
 			if (!HasBindingFor(type))
 			{
@@ -100,7 +100,7 @@ namespace Gum.DI.Container
 			return instance;
 		}
 
-		private void InjectInto(object instance)
+		public void InjectInto(object instance)
 		{
 			Type type = instance.GetType();
 			TypeCache typeCache = TypeCache.Get(type);
