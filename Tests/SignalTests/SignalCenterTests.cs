@@ -1,5 +1,4 @@
-﻿using System;
-using Gum.Signal.Core;
+﻿using Gum.Signal.Core;
 using NUnit.Framework;
 
 namespace Tests.SignalTests
