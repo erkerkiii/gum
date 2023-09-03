@@ -130,7 +130,10 @@ namespace Gum.Composer
 		public void Dispose()
 		{
 			_aspectLookUp.Dispose();
-			ArrayPool<IAspect>.GetPool(_aspects.Length).Put(_aspects);
+			if (_aspects.Length > 0)
+			{
+				ArrayPool<IAspect>.GetPool(_aspects.Length).Put(_aspects);
+			}
 		}
 	}
 }

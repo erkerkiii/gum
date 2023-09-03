@@ -8,18 +8,15 @@ namespace Tests.PoolingTests
     {
         private IPool<MockPoolable> _pool;
 
-        private PoolBuilder<MockPoolable> _poolBuilder;
-        
         [SetUp]
         public void Setup()
         {
-            _poolBuilder = new PoolBuilder<MockPoolable>();
-            _pool = _poolBuilder
+            PoolBuilder<MockPoolable> poolBuilder = new PoolBuilder<MockPoolable>();
+            _pool = poolBuilder
                 .SetPoolType(PoolType.Stack)
                 .FromPoolableInstanceProvider(new MockInstanceProvider())
                 .Build();
 
-            _poolBuilder.Clear();
             Assert.IsTrue(_pool is StackPool<MockPoolable>);
         }
 
@@ -59,8 +56,6 @@ namespace Tests.PoolingTests
         {
             _pool?.Dispose();
             _pool = null;
-            _poolBuilder.Clear();
-            _poolBuilder = null;
         }
     }
 }

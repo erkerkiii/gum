@@ -3,7 +3,7 @@ using Gum.Core.Assert;
 
 namespace Gum.Pooling
 {
-    public sealed class PoolBuilder<T> where T : IPoolable
+    public struct PoolBuilder<T> where T : IPoolable
     {
         private CreationInfo _creationInfo;
 
@@ -76,11 +76,6 @@ namespace Gum.Pooling
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        public void Clear()
-        {
-            _creationInfo = default;
         }
 
         private struct CreationInfo
