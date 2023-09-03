@@ -26,7 +26,7 @@ You can create a pull request or email me directly to display your game/company 
 
 ## Installation
 
-# Unity
+# Unity Installation
 Add this to the ```Packages\manifest.json```
 
 ```
@@ -47,6 +47,20 @@ Dependencies
     "com.erkerkiii.gum":  "1.0.17"
     }
 ```
+
+# Nuget Installation
+
+Nuget packages are available for C# projects. Installation with the dotnet CLI:
+
+```
+dotnet add package Gum.Core
+dotnet add package Gum.Composer
+dotnet add package Gum.Pooling
+dotnet add package Gum.Signal
+dotnet add package Gum.WebRequest
+```
+
+> :warning Nuget installation **doesn't** include any Unity features.
 
 ## Pooling
 This is a very basic implementation of the pooling system.
