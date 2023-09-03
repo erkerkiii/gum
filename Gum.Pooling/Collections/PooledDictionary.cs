@@ -5,6 +5,8 @@ namespace Gum.Pooling.Collections
 {
 	public sealed class PooledDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IDisposable
 	{
+		public PooledDictionary() : base(16) { }
+		
 		public static PooledDictionary<TKey, TValue> Get()
 		{
 			return DictionaryPool<TKey, TValue>.Shared.Get();
