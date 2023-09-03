@@ -10,7 +10,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Aspects" />
+      <Compile Remove="Aspects\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Aspects\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Aspects\**" />
     </ItemGroup>
 
 </Project>

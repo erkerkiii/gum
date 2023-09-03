@@ -19,7 +19,7 @@ namespace Gum.Composer
 		private readonly IAspect[] _aspects;
 
 		public int AspectCount => IsValid
-			? _aspectLookUp.Count
+			? _aspectLookUp.Count 
 			: 0;
 
 		public readonly bool IsValid;
@@ -122,52 +122,15 @@ namespace Gum.Composer
 			}
 		}
 
+		public Dictionary<AspectType, IAspect>.ValueCollection.Enumerator GetEnumerator()
+		{
+			return _aspectLookUp.Values.GetEnumerator();
+		}
+
 		public void Dispose()
 		{
 			_aspectLookUp.Dispose();
 			ArrayPool<IAspect>.GetPool(_aspects.Length).Put(_aspects);
-		}
-
-		public Enumerator GetEnumerator()
-		{
-			return new Enumerator(this);
-		}
-
-		public ref struct Enumerator
-		{
-			public IAspect Current
-			{
-				[MethodImpl(MethodImplOptions.AggressiveInlining)]
-				get => _source[_index - 1];
-			}
-
-			private int _index;
-
-			private readonly int _count;
-
-			private readonly IAspect[] _source;
-
-			public Enumerator(Composition composition)
-			{
-				_source = composition._aspectLookUp.Values.ToArray();
-				_index = 0;
-				_count = _source.Length;
-			}
-
-			public bool MoveNext()
-			{
-				return _index++ < _count;
-			}
-
-			public void Reset()
-			{
-				_index = 0;
-			}
-
-			public void Dispose()
-			{
-				_index = 0;
-			}
 		}
 	}
 }
