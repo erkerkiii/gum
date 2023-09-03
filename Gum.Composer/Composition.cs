@@ -17,7 +17,7 @@ namespace Gum.Composer
 		public IAspect this[AspectType aspectType] => _aspectLookUp[aspectType];
 
 		private readonly IAspect[] _aspects;
-		
+
 		public int AspectCount => IsValid
 			? _aspectLookUp.Count
 			: 0;
@@ -133,18 +133,12 @@ namespace Gum.Composer
 			return new Enumerator(this);
 		}
 
-		public struct Enumerator : IEnumerator<IAspect>
+		public ref struct Enumerator
 		{
 			public IAspect Current
 			{
 				[MethodImpl(MethodImplOptions.AggressiveInlining)]
 				get => _source[_index - 1];
-			}
-
-			object IEnumerator.Current
-			{
-				[MethodImpl(MethodImplOptions.AggressiveInlining)]
-				get => Current;
 			}
 
 			private int _index;
