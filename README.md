@@ -60,7 +60,7 @@ dotnet add package Gum.Signal
 dotnet add package Gum.WebRequest
 ```
 
-> :warning Nuget installation **doesn't** include any Unity features.
+> :warning: Nuget installation **doesn't** include any Unity features.
 
 ## Pooling
 This is a very basic implementation of the pooling system.
