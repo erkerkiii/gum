@@ -57,6 +57,7 @@ namespace Gum.Composer.CodeGen
 			StringBuilder aspectTypeCatalogStringBuilder = new StringBuilder();
 			StringBuilder ctorStringBuilder = new StringBuilder();
 			aspectFileStringBuilder.Append(NAMESPACE_TEMPLATE.Replace(NAMESPACE, PathConfig.NAMESPACE));
+
 			aspectFileStringBuilder.Append(LINE + "{");
 			foreach (AspectPrototype aspectPrototype in AspectFileReader.ReadAspects())
 			{
@@ -65,25 +66,30 @@ namespace Gum.Composer.CodeGen
 					.Replace(OBJECT_NAME, aspectName));
 				
 				int argCounter = 0;
-				foreach (KeyValuePair<string, string> kvp in aspectPrototype.Fields)
+
+				if (!aspectPrototype.IsTagAspect)
 				{
-					string fieldName = kvp.Key;
-					string type = kvp.Value;
-					bodyStringBuilder.Append(FIELD_TEMPLATE
-						.Replace(TYPE, type)
-						.Replace(FIELD_NAME, fieldName));
+					foreach (KeyValuePair<string, string> kvp in aspectPrototype.Fields)
+					{
+						string fieldName = kvp.Key;
+						string type = kvp.Value;
+						bodyStringBuilder.Append(FIELD_TEMPLATE
+							.Replace(TYPE, type)
+							.Replace(FIELD_NAME, fieldName));
 
-					string argName = $"arg{argCounter}";
-					argsStringBuilder.Append($"{type} {argName}, ");
-					ctorStringBuilder.Append($"{LINE}{TAB}{TAB}{TAB} {fieldName} = {argName};");
-					argCounter++;
+						string argName = $"arg{argCounter}";
+						argsStringBuilder.Append($"{type} {argName}, ");
+						ctorStringBuilder.Append($"{LINE}{TAB}{TAB}{TAB} {fieldName} = {argName};");
+						argCounter++;
+					}
+
+					argsStringBuilder.Remove(argsStringBuilder.Length - 2, 2);
+					
+					bodyStringBuilder.Append(CTOR_TEMPLATE.Replace(OBJECT_NAME, aspectName)
+						.Replace(ARGS, argsStringBuilder.ToString())
+						.Replace(CTOR_CONTENT, ctorStringBuilder.ToString()));
 				}
-
-				argsStringBuilder.Remove(argsStringBuilder.Length - 2, 2);
-
-				bodyStringBuilder.Append(CTOR_TEMPLATE.Replace(OBJECT_NAME, aspectName)
-					.Replace(ARGS, argsStringBuilder.ToString())
-					.Replace(CTOR_CONTENT, ctorStringBuilder.ToString()));
+				
 				aspectFileStringBuilder.Append(STRUCT_TEMPLATE
 					.Replace(OBJECT_NAME, $"{aspectName}Aspect")
 					.Replace(CONTENT, bodyStringBuilder.ToString()));
@@ -97,9 +103,13 @@ namespace Gum.Composer.CodeGen
 				argsStringBuilder.Clear();
 				ctorStringBuilder.Clear();
 			}
-
 			aspectFileStringBuilder.Append(LINE + "}");
 
+			WriteAspects(aspectTypeCatalogStringBuilder, aspectFileStringBuilder);
+		}
+
+		private static void WriteAspects(StringBuilder aspectTypeCatalogStringBuilder, StringBuilder aspectFileStringBuilder)
+		{
 			string aspectCatalogClassFile = Path.Combine(PathConfig.GetOutputDirectoryPath(), ASPECT_CATALOG_FILE);
 			string aspectsFile = Path.Combine(PathConfig.GetOutputDirectoryPath(), ASPECTS_FILE);
 

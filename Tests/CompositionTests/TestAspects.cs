@@ -29,4 +29,11 @@ namespace Tests.CompositionTests
 			MyInt = myInt;
 		}
 	}
+
+	public readonly struct TagAspect : IAspect
+	{
+		public static readonly AspectType ASPECT_TYPE = 2;
+
+		public AspectType Type => ASPECT_TYPE;
+	}
 }

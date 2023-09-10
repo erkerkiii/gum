@@ -59,6 +59,7 @@ namespace Tests.CompositionTests
 		{
 			Assert.IsTrue(_composition.HasAspect(BarAspect.ASPECT_TYPE));
 			Assert.IsFalse(_composition.HasAspect(FooAspect.ASPECT_TYPE));
+			Assert.IsTrue(_composition.HasAspect(TagAspect.ASPECT_TYPE));
 		}
 
 		[Test]

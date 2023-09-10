@@ -199,9 +199,21 @@ namespace Gum.Composer.Unity.Editor
                         return;
                     }
                 }
-
+                
                 _acceptedAspectName = _attemptedAspectName;
                 _attemptedAspectName = string.Empty;
+            }
+
+            if (_attemptedAspectName != String.Empty && 
+                GUILayout.Button("Generate tag aspect"))
+            {
+                _fieldNameTypeMap.Clear();
+                
+                _acceptedAspectName = _attemptedAspectName;
+                _attemptedAspectName = string.Empty;
+
+                GenerateAspect();
+                Repaint();
             }
 
             EditorGUILayout.EndVertical();
@@ -266,30 +278,29 @@ namespace Gum.Composer.Unity.Editor
         {
             if (GUILayout.Button("Generate Aspect", "Button"))
             {
-                if (IsStringEmpty(_acceptedAspectName))
-                {
-                    return;
-                }
-
-                if (_fieldNameTypeMap.Count <= 0)
-                {
-                    Debug.LogError("Error while generating aspect! In order to generate aspect, least one field is required.");
-                    return;
-                }
-
-                AspectPrototype aspectPrototype = new AspectPrototype(_acceptedAspectName, _fieldNameTypeMap);
-                List<AspectPrototype> aspectPrototypes = new List<AspectPrototype>();
-                aspectPrototypes.Add(aspectPrototype);
-
-                AspectFileWriter.WriteAspects(aspectPrototypes);
-                CompositionCodeGenerator.Run();
-                
-                TriggerCodeCompilation();
-                
-                Clear();
+                GenerateAspect();
             }
         }
-        
+
+        private void GenerateAspect()
+        {
+            if (IsStringEmpty(_acceptedAspectName))
+            {
+                return;
+            }
+
+            AspectPrototype aspectPrototype = new AspectPrototype(_acceptedAspectName, _fieldNameTypeMap);
+            List<AspectPrototype> aspectPrototypes = new List<AspectPrototype>();
+            aspectPrototypes.Add(aspectPrototype);
+
+            AspectFileWriter.WriteAspects(aspectPrototypes);
+            CompositionCodeGenerator.Run();
+
+            Clear();
+            TriggerCodeCompilation();
+            Close();
+        }
+
         private static void TriggerCodeCompilation()
         {
             CompilationPipeline.RequestScriptCompilation();
