@@ -102,5 +102,18 @@ namespace Tests.DITests
 				_diContainer.Resolve<IBar>();
 			});
 		}
+		
+		[Test]
+		public void Bind_Transient()
+		{
+			_diContainer.Bind<IBar>().To<Bar>().AsTransient().Lazy();
+
+			IBar bar0 = _diContainer.Resolve<IBar>();
+			IBar bar1 = _diContainer.Resolve<IBar>();
+
+			Assert.NotNull(bar0);
+			Assert.NotNull(bar1);
+			Assert.AreNotSame(bar0, bar1);
+		}
 	}
 }
