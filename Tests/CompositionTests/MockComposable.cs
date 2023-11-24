@@ -14,8 +14,9 @@ namespace Tests.CompositionTests
 
 		public Composition GetComposition()
 		{
-			IAspect[] aspects = ArrayPool<IAspect>.GetPool(1).Get();
+			IAspect[] aspects = ArrayPool<IAspect>.GetPool(2).Get();
 			aspects[0] = new BarAspect(MyInt);
+			aspects[1] = new TagAspect();
 			return Composition.Create(aspects);
 		}
 	}
