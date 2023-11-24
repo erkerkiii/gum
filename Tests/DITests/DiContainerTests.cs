@@ -107,7 +107,8 @@ namespace Tests.DITests
 		public void Bind_Transient()
 		{
 			_diContainer.Bind<IBar>().To<Bar>().AsTransient().Lazy();
-
+			_diContainer.Bind<IFoo>().To<Foo>().AsSingle().Lazy();
+			
 			IBar bar0 = _diContainer.Resolve<IBar>();
 			IBar bar1 = _diContainer.Resolve<IBar>();
 

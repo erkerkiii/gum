@@ -30,20 +30,17 @@ namespace Gum.Pooling
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Get()
 		{
-			if (_pool.Count > 0)
-			{
-				return _pool.Pop();
-			}
-
-			return new T[_length];
+			return _pool.Count > 0
+				? _pool.Pop()
+				: new T[_length];
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ArrayPool<T> GetPool(int length)
 		{
-			if (ArrayPools.ContainsKey(length))
+			if (ArrayPools.TryGetValue(length, out ArrayPool<T> pool))
 			{
-				return ArrayPools[length];
+				return pool;
 			}
 
 			ArrayPool<T> arrayPool = new ArrayPool<T>(length);
