@@ -7,6 +7,8 @@ namespace Gum.Pooling
 	{
 		private static readonly Dictionary<int, ArrayPool<T>> ArrayPools = new Dictionary<int, ArrayPool<T>>();
 
+		private static int _highestCapactiyPool;
+
 		private readonly Stack<T[]> _pool = new Stack<T[]>();
 
 		private readonly int _length;
@@ -23,7 +25,7 @@ namespace Gum.Pooling
 			{
 				array[index] = default;
 			}
-			
+
 			_pool.Push(array);
 		}
 
@@ -41,15 +43,34 @@ namespace Gum.Pooling
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ArrayPool<T> GetPool(int length)
 		{
-			if (ArrayPools.ContainsKey(length))
+			if (_highestCapactiyPool >= length && ArrayPools.TryGetValue(_highestCapactiyPool, out ArrayPool<T> pool))
 			{
-				return ArrayPools[length];
+				return pool;
 			}
 
 			ArrayPool<T> arrayPool = new ArrayPool<T>(length);
 			ArrayPools.Add(length, arrayPool);
 
+			if (length > _highestCapactiyPool)
+			{
+				_highestCapactiyPool = length;
+			}
+
 			return arrayPool;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static PooledArray<T> Get(int length)
+		{
+			ArrayPool<T> arrayPool = GetPool(length);
+			return new PooledArray<T>(arrayPool, arrayPool.Get(), length);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void Clear()
+		{
+			_highestCapactiyPool = 0;
+			ArrayPools.Clear();
 		}
 	}
 }
