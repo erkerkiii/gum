@@ -17,10 +17,10 @@ namespace Tests.PoolingTests
 
 			for (int index = 0; index < array.Length; index++)
 			{
-				array[index] = index;
+				array[index] = index + 1;
 			}
 
-			Assert.AreEqual(0, array[0]);
+			Assert.AreEqual(1, array[0]);
 		}
 
 		[Test]
@@ -66,6 +66,56 @@ namespace Tests.PoolingTests
 			Assert.Throws<GumException>(() =>
 			{
 				int a = pooledArray[arrayLength + 1];
+			});
+		}
+
+		[Test]
+		[TestCase(1)]
+		[TestCase(5)]
+		[TestCase(10)]
+		public void ToArray(int arrayLength)
+		{
+			PooledArray<int> array = ArrayPool<int>.Get(arrayLength * 2);
+			array.Dispose();
+			using PooledArray<int> pooledArray = ArrayPool<int>.Get(arrayLength);
+			for (int index = 0; index < pooledArray.Length; index++)
+			{
+				pooledArray[index] = index + 1;
+			}
+			
+			int[] createdArray = pooledArray.ToArray();
+			
+			Assert.AreEqual(pooledArray[0], createdArray[0]);
+			Assert.AreEqual(pooledArray.Length, createdArray.Length);
+		}
+
+		[Test]
+		public void SanityCheck_Throws()
+		{
+			PooledArray<int> pooledArray = new PooledArray<int>();
+			Assert.Throws<GumException>(() =>
+			{
+				pooledArray[0] = 0;
+			});
+			
+			Assert.Throws<GumException>(() =>
+			{
+				int a = pooledArray[0];
+			});
+			
+			Assert.Throws<GumException>(() =>
+			{
+				pooledArray.ToArray();
+			});
+			
+			Assert.Throws<GumException>(() =>
+			{
+				pooledArray.GetSource();
+			});
+			
+			Assert.Throws<GumException>(() =>
+			{
+				pooledArray.Dispose();
 			});
 		}
 
