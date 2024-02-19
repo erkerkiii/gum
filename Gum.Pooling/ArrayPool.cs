@@ -41,14 +41,19 @@ namespace Gum.Pooling
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static ArrayPool<T> GetPool(int length)
+		public static ArrayPool<T> GetPool(int length, bool isExactLengthRequired = true)
 		{
-			if (_highestCapactiyPool >= length && ArrayPools.TryGetValue(_highestCapactiyPool, out ArrayPool<T> pool))
+			if (!isExactLengthRequired && _highestCapactiyPool >= length)
 			{
-				return pool;
+				return ArrayPools[_highestCapactiyPool];
 			}
 
-			ArrayPool<T> arrayPool = new ArrayPool<T>(length);
+			if (ArrayPools.TryGetValue(length, out ArrayPool<T> arrayPool))
+			{
+				return arrayPool;
+			}
+
+			arrayPool = new ArrayPool<T>(length);
 			ArrayPools.Add(length, arrayPool);
 
 			if (length > _highestCapactiyPool)
@@ -62,7 +67,7 @@ namespace Gum.Pooling
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static PooledArray<T> Get(int length)
 		{
-			ArrayPool<T> arrayPool = GetPool(length);
+			ArrayPool<T> arrayPool = GetPool(length, false);
 			return new PooledArray<T>(arrayPool, arrayPool.Get(), length);
 		}
 

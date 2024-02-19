@@ -30,11 +30,12 @@ namespace Tests.PoolingTests
 		public void Gets_Pooled_Array(int arrayLength)
 		{
 			PooledArray<int> array = ArrayPool<int>.Get(arrayLength * 2);
+			int[] source = array.GetSource();
 			array.Dispose();
 
 			using PooledArray<int> pooledArray = ArrayPool<int>.Get(arrayLength);
 
-			Assert.AreEqual(arrayLength * 2, pooledArray.GetSource().Length);
+			Assert.AreSame(source, pooledArray.GetSource());
 		}
 		
 		[Test]

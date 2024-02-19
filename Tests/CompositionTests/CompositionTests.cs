@@ -7,29 +7,24 @@ namespace Tests.CompositionTests
 	[TestFixture]
 	public class CompositionTests
 	{
-		private Composition _composition;
-
 		private const int VALUE = 5;
 		
-		[SetUp]
-		public void Setup()
-		{
-			_composition = new MockComposable(VALUE).GetComposition();
-		}
-
 		[Test]
 		public void Get_Aspect()
 		{
-			BarAspect barAspect = _composition.GetAspect<BarAspect>();
+			using Composition composition = new MockComposable(VALUE).GetComposition();
+			BarAspect barAspect = composition.GetAspect<BarAspect>();
 			Assert.AreEqual(VALUE, barAspect.MyInt);
 		}
 		
 		[Test]
 		public void Try_Get_Aspect()
 		{
-			Assert.IsTrue(_composition.TryGetAspect(out BarAspect barAspect));
+			using Composition composition = new MockComposable(VALUE).GetComposition();
+
+			Assert.IsTrue(composition.TryGetAspect(out BarAspect barAspect));
 			Assert.AreEqual(VALUE, barAspect.MyInt);
-			Assert.IsFalse(_composition.TryGetAspect(out FooAspect _));
+			Assert.IsFalse(composition.TryGetAspect(out FooAspect _));
 		}
 		
 		[Test]
@@ -50,16 +45,19 @@ namespace Tests.CompositionTests
 		[Test]
 		public void Get_Aspect_With_Indexer()
 		{
-			BarAspect barAspect = (BarAspect)_composition[BarAspect.ASPECT_TYPE];
+			using Composition composition = new MockComposable(VALUE).GetComposition();
+			BarAspect barAspect = (BarAspect)composition[BarAspect.ASPECT_TYPE];
 			Assert.AreEqual(VALUE, barAspect.MyInt);
 		}
 
 		[Test]
 		public void Has_Aspect()
 		{
-			Assert.IsTrue(_composition.HasAspect(BarAspect.ASPECT_TYPE));
-			Assert.IsFalse(_composition.HasAspect(FooAspect.ASPECT_TYPE));
-			Assert.IsTrue(_composition.HasAspect(TagAspect.ASPECT_TYPE));
+			using Composition composition = new MockComposable(VALUE).GetComposition();
+
+			Assert.IsTrue(composition.HasAspect(BarAspect.ASPECT_TYPE));
+			Assert.IsFalse(composition.HasAspect(FooAspect.ASPECT_TYPE));
+			Assert.IsTrue(composition.HasAspect(TagAspect.ASPECT_TYPE));
 		}
 
 		[Test]
@@ -133,12 +131,6 @@ namespace Tests.CompositionTests
 			}
 
 			Assert.Pass();
-		}
-
-		[TearDown]
-		public void TearDown()
-		{
-			_composition.Dispose();
 		}
 	}
 }
