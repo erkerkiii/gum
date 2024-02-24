@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Gum.Pooling.Diagnostics;
 
 namespace Gum.Pooling
 {
@@ -27,17 +28,23 @@ namespace Gum.Pooling
 			}
 
 			_pool.Push(array);
+			
+#if DEBUG || UNITY_EDITOR
+			PoolMonitor.UnreleasedPooledArrays.Remove(array);
+#endif
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Get()
 		{
-			if (_pool.Count > 0)
-			{
-				return _pool.Pop();
-			}
-
-			return new T[_length];
+			T[] array = _pool.Count > 0
+				? _pool.Pop()
+				: new T[_length];
+			
+#if DEBUG || UNITY_EDITOR
+			PoolMonitor.UnreleasedPooledArrays.Add(array, new System.Diagnostics.StackTrace().ToString());
+#endif
+			return array;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -76,6 +83,9 @@ namespace Gum.Pooling
 		{
 			_highestCapactiyPool = 0;
 			ArrayPools.Clear();
+#if DEBUG || UNITY_EDITOR
+			PoolMonitor.UnreleasedPooledArrays.Clear();
+#endif
 		}
 	}
 }

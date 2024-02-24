@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Gum.Pooling.Collections;
+using Gum.Pooling.Diagnostics;
 
 namespace Gum.Pooling
 {
@@ -14,17 +15,23 @@ namespace Gum.Pooling
 			if (!_pool.Contains(dictionary))
 			{
 				_pool.Push(dictionary);
+#if DEBUG || UNITY_EDITOR
+				PoolMonitor.UnreleasedPooledDictionaries.Remove(dictionary);
+#endif
 			}
 		}
 
 		public PooledDictionary<TKey, TValue> Get()
 		{
-			if (_pool.Count > 0)
-			{
-				return _pool.Pop();
-			}
+			PooledDictionary<TKey, TValue> pooledDictionary = _pool.Count > 0
+				? _pool.Pop()
+				: new PooledDictionary<TKey, TValue>();
 
-			return new PooledDictionary<TKey, TValue>();
+#if DEBUG || UNITY_EDITOR
+			PoolMonitor.UnreleasedPooledDictionaries.Add(pooledDictionary, new System.Diagnostics.StackTrace().ToString());
+#endif
+			
+			return pooledDictionary;
 		}
 	}
 }
