@@ -8,7 +8,9 @@ namespace Gum.Pooling.Diagnostics
 	internal static class PoolMonitor
 	{
 		public static readonly Dictionary<Array, string> UnreleasedPooledArrays = new Dictionary<Array, string>();
+		
 		public static readonly Dictionary<IList, string> UnreleasedPooledLists = new Dictionary<IList, string>();
+		
 		public static readonly Dictionary<IDictionary, string> UnreleasedPooledDictionaries = new Dictionary<IDictionary, string>();
 
 		static PoolMonitor()
