@@ -10,23 +10,16 @@ Gum is a collection of tools focusing mainly on game development with the goal o
 - [Signals(pub/sub)](#signals)
 
 # Trusted By
-<p align="center">
-  <img src="Resources/gleamgames.png?raw=true width="350" title="Gleam Games">
-</p>
 
-# Made With Gum
+| [GoArt Metaverse](https://www.goartmetaverse.com/) | [Roof Stacks](https://roofstacks.com/) | [Gleam Games](https://www.gleamgames.com/) |
+| :---: | :---: | :---: |
+| <img src="Resources/goart.png" width="250" title="GoArt Metaverse">   | <img src="Resources/roof.png" width="250" title="Roof Stacks"> | <img src="Resources/gleamgames.png" width="250" title="Gleam Games"> |
 
 You can create a pull request or email me directly to display your game/company here emrefistikcioglu@gmail.com
 
-<p align="center">
-  <img src="Resources/everblast.png?raw=true width="350" height="350" title="Gleam Games">
-</p>
-
-[EverBlast - Blast and Match](https://play.google.com/store/apps/details?id=com.gleamgames.everblast&hl=en&gl=US)
-
 ## Installation
 
-# Unity
+# Unity Installation
 Add this to the ```Packages\manifest.json```
 
 ```
@@ -44,9 +37,23 @@ Add this to the ```Packages\manifest.json```
 Dependencies
 ```
  "dependencies": {
-    "com.erkerkiii.gum":  "1.0.17"
+    "com.erkerkiii.gum":  "1.0.18"
     }
 ```
+
+# Nuget Installation
+
+Nuget packages are available for C# projects. Installation with the dotnet CLI:
+
+```
+dotnet add package Gum.Core
+dotnet add package Gum.Composer
+dotnet add package Gum.Pooling
+dotnet add package Gum.Signal
+dotnet add package Gum.WebRequest
+```
+
+> :warning: Nuget installation **doesn't** include any Unity features.
 
 ## Pooling
 This is a very basic implementation of the pooling system.
@@ -184,6 +191,7 @@ public struct Foo : IComposable
     public Composition GetComposition() //this part has to be written manually
     {
         //use array pools to allocate less
+	//3 = length of the requested array
         IAspect[] aspects = ArrayPool<IAspect>.GetPool(3).Get();
         aspects[0] = new FooAspect(foo);
         aspects[1] = new BarAspect(bar);
@@ -200,6 +208,7 @@ public class Bar : IComposable
     
     public Composition GetComposition()
     {
+	//2 = length of the requested array
         IAspect[] aspects = ArrayPool<IAspect>.GetPool(2).Get();
         aspects[0] = new QuxAspect(qux);
         aspects[1] = new BarAspect(bar);
@@ -220,7 +229,7 @@ public void UseAspects(IComposable composable)
 
 ### MonoComposable 
 
-Composition are also available on Unity `MonoBehaviours `. Deriving from the abstract `MonoComposable` class enables using composition on Unity objects. `MonoComposable` class handles creation of composable, deriving classes only responsible for implementing the `GetAspects()` absrtact method to assign aspects.
+Composition is also available for Unity `MonoBehaviours `. Deriving from the abstract `MonoComposable` class enables using composition on Unity objects. `MonoComposable` class handles creation of composable, deriving classes only responsible for implementing the `GetAspects()` absrtact method to assign aspects.
 
 ```CSharp
 public class FooMonoComposable : MonoComposable
@@ -229,6 +238,7 @@ public class FooMonoComposable : MonoComposable
 
     protected override IAspect[] GetAspects() // Deriving class implements GetAspects method.
     {
+	//1 = length of the requested array
         IAspect[] aspects = ArrayPool<IAspect>.GetPool(1).Get();
         aspects[0] = new FooAspect(_value);
         return aspects;
