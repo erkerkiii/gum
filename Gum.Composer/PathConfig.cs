@@ -7,7 +7,7 @@ namespace Gum.Composer
 	{
 		private static readonly string ProjectDirectory = GetProjectDirectory(Directory.GetCurrentDirectory());
 
-		public const string NAMESPACE = @"Gum.Composer";
+		public const string NAMESPACE = "Gum.Composer";
 		private const string FOLDER_SEARCH_PATTERN = "Assets";
 		private const string COMPOSER_FOLDER_PATH = "Composer";
 		private const string GENERATED_FOLDER_PATH = "Generated";
@@ -55,7 +55,7 @@ namespace Gum.Composer
 			{
 				Directory.GetDirectories(directoryPath, folderNamePattern, SearchOption.AllDirectories);
 			}
-			catch (DirectoryNotFoundException directoryNotFoundException)
+			catch (DirectoryNotFoundException)
 			{
 				string outputFolderNamePattern = Path.Combine(directoryPath, folderNamePattern);
 				string outputAspectFolderNamePattern =

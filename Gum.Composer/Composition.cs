@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using Gum.Composer.Exception;
 using Gum.Composer.Internal;
 using Gum.Pooling;
