@@ -5,6 +5,10 @@ namespace Gum.Pooling.Collections
 {
 	public sealed class PooledList<T> : List<T>, IDisposable
 	{
+		internal PooledList()
+		{
+		}
+		
 		public static PooledList<T> Get()
 		{
 			return ListPool<T>.Shared.Get();

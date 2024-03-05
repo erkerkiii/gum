@@ -18,9 +18,14 @@ namespace Gum.Composer
 
 		private readonly IAspect[] _aspects;
 
-		public int AspectCount => IsValid
-			? _aspectLookUp.Count
-			: 0;
+		public int AspectCount
+		{
+			get
+			{
+				SanityCheck();
+				return _aspectLookUp.Count;
+			}
+		}
 
 		public readonly bool IsValid;
 
