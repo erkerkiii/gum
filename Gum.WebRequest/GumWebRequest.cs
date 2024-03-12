@@ -58,7 +58,15 @@ namespace Gum.WebRequest
             
             return new GumWebRequest(httpRequestMessage);
         }
-
+        
+        public static GumWebRequest Delete(string url, HttpContent httpContent = null)
+        {
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, url);
+            httpRequestMessage.Content = httpContent;
+            
+            return new GumWebRequest(httpRequestMessage);
+        }
+        
         public async Task<Response> SendAsync(CancellationToken rCancellationToken = default, TimeSpan timeoutSpan = default)
         {
             if (timeoutSpan == default)
