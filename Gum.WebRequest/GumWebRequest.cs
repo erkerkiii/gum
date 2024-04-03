@@ -59,6 +59,16 @@ namespace Gum.WebRequest
             return new GumWebRequest(httpRequestMessage);
         }
         
+        public static GumWebRequest Patch(string url, HttpContent httpContent = null)
+        {
+            HttpMethod method = new HttpMethod("PATCH");
+
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(method, url);
+            httpRequestMessage.Content = httpContent;
+            
+            return new GumWebRequest(httpRequestMessage);
+        }
+        
         public static GumWebRequest Delete(string url, HttpContent httpContent = null)
         {
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, url);
