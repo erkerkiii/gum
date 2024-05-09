@@ -41,7 +41,7 @@ namespace Gum.Pooling.Diagnostics
 			foreach (string stackTrace in UnreleasedPooledDictionaries.Values)
 			{
 #if UNITY_EDITOR
-				UnityEngine.Debug.LogError($"PooledDictionary not disposed correctly: {stackTrace");
+				UnityEngine.Debug.LogError($"PooledDictionary not disposed correctly: {stackTrace}");
 #else
 				Console.WriteLine($"PooledDictionary not disposed correctly: {stackTrace}");
 #endif
