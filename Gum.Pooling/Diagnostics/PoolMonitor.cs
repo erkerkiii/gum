@@ -23,7 +23,7 @@ namespace Gum.Pooling.Diagnostics
 			foreach (string stackTrace in UnreleasedPooledArrays.Values)
 			{
 				#if UNITY_EDITOR
-				UnityEngine.Debug.LogError($"ArrayPool not disposed correctly: {kvp.Value}");
+				UnityEngine.Debug.LogError($"ArrayPool not disposed correctly: {stackTrace}");
 				#else
 				Console.WriteLine($"ArrayPool not disposed correctly: {stackTrace}");
 				#endif
@@ -32,7 +32,7 @@ namespace Gum.Pooling.Diagnostics
 			foreach (string stackTrace in UnreleasedPooledLists.Values)
 			{
 #if UNITY_EDITOR
-				UnityEngine.Debug.LogError($"PooledList not disposed correctly: {kvp.Value}");
+				UnityEngine.Debug.LogError($"PooledList not disposed correctly: {stackTrace}");
 #else
 				Console.WriteLine($"PooledList not disposed correctly: {stackTrace}");
 #endif
@@ -41,7 +41,7 @@ namespace Gum.Pooling.Diagnostics
 			foreach (string stackTrace in UnreleasedPooledDictionaries.Values)
 			{
 #if UNITY_EDITOR
-				UnityEngine.Debug.LogError($"PooledDictionary not disposed correctly: {kvp.Value}");
+				UnityEngine.Debug.LogError($"PooledDictionary not disposed correctly: {stackTrace");
 #else
 				Console.WriteLine($"PooledDictionary not disposed correctly: {stackTrace}");
 #endif
