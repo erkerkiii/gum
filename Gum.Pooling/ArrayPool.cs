@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+
+#if DEBUG || UNITY_EDITOR
 using Gum.Pooling.Diagnostics;
+#endif
 
 namespace Gum.Pooling
 {
