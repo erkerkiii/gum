@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Gum.Pooling.Collections;
-#if DEBUG || UNITY_EDITOR
+#if GUM_DEBUG
 using Gum.Pooling.Diagnostics;
 #endif
 
@@ -17,7 +17,7 @@ namespace Gum.Pooling
 			if (!_pool.Contains(dictionary))
 			{
 				_pool.Push(dictionary);
-#if DEBUG || UNITY_EDITOR
+#if GUM_DEBUG
 				PoolMonitor.UnreleasedPooledDictionaries.Remove(dictionary);
 #endif
 			}
@@ -29,7 +29,7 @@ namespace Gum.Pooling
 				? _pool.Pop()
 				: new PooledDictionary<TKey, TValue>();
 
-#if DEBUG || UNITY_EDITOR
+#if GUM_DEBUG
 			PoolMonitor.UnreleasedPooledDictionaries.Add(pooledDictionary, new System.Diagnostics.StackTrace().ToString());
 #endif
 			
