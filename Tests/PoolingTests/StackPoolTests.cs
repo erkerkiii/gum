@@ -44,6 +44,19 @@ namespace Tests.PoolingTests
             
             Assert.IsFalse(pooledObject.IsActive);
         }
+        
+        [Test]
+        public void StackPool_Count_Check_After_Put()
+        {
+            MockPoolable pooledObject = _pool.Get();
+            
+            Assert.IsNotNull(pooledObject);
+            
+            pooledObject.ReturnToPool();
+            pooledObject.ReturnToPool();
+
+            Assert.IsTrue(_pool.Count == 1);
+        }
 
         [Test]
         public void StackPool_Gets_Erased()

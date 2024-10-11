@@ -44,6 +44,11 @@ namespace Gum.Pooling
 
         private void Put(IPoolable poolable)
         {
+            if (_objectPool.Contains(poolable))
+            {
+                return;
+            }
+
             _objectPool.Push(poolable);
         }
 
