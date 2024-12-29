@@ -34,6 +34,28 @@ namespace Gum.Signal.Core
 			}
 		}
 		
+		public bool TryUnsubscribe<T>(Action<T> action)
+		{
+			bool isSuccessful = false;
+			lock (_lock)
+			{
+				for (int index = 0; index < _entries.Count; index++)
+				{
+					Entry entry = _entries[index];
+
+					if (entry.Delegate as Action<T> != action || !_entries.Contains(entry))
+					{
+						continue;
+					}
+					
+					_entries.Remove(entry);
+					isSuccessful = true;
+				}
+			}
+
+			return isSuccessful;
+		}
+		
 		public void Fire<T>(T signal)
 		{
 			int hashCode = typeof(T).GetHashCode();
