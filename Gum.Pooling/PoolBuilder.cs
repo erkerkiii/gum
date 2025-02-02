@@ -47,6 +47,21 @@ namespace Gum.Pooling
                     return GetStackPool();
                 case PoolType.WeakStack:
                     return GetWeakStackPool();
+                case PoolType.Queue:
+                    return GetQueuePool();
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private IPool<T> GetQueuePool()
+        {
+            switch (_creationInfo.providerType)
+            {
+                case ProviderType.FromPoolableInstanceProvider:
+                    return new QueuePool<T>(_creationInfo.poolableInstanceProvider, _creationInfo.initialSize);
+                case ProviderType.FromMethod:
+                    return new QueuePool<T>(_creationInfo.instanceProviderCallback, _creationInfo.initialSize);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
