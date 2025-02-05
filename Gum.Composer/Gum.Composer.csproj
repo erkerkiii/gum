@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.1;net5.0;net7.0;net472</TargetFrameworks>
         <Version>1.0.23</Version>
         <Title>Gum.Composer</Title>
         <Authors>S. Emre Fıstıkcıoğlu, Semih Çelek, A. Alp Atabey, Mehmet Bütün</Authors>
@@ -13,6 +12,7 @@
         <RepositoryType>Open Source</RepositoryType>
         <PackageTags>unity, unity3D, composition, observer networking csharp unity unity3d observer-pattern unity3d-plugin csharp-library pooling object-pooling</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
