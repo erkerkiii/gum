@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Gum.Signal.Core;
 using NUnit.Framework;
 
@@ -39,6 +40,50 @@ namespace Tests.SignalTests
 			Assert.IsFalse(_signalCenter.Exists<FooSignal>(FooAction));
 		}
 		
+		[Test]
+		public void Unsubscribe_From_Async_Method()
+		{
+			async Task BarActionAsync(BarSignal _)
+			{
+				await Task.Delay(100);
+			}
+
+			_signalCenter.Subscribe<BarSignal>(BarActionAsync);
+			Assert.IsTrue(_signalCenter.Exists<BarSignal>(BarActionAsync));
+			
+			_signalCenter.Unsubscribe<BarSignal>(BarActionAsync);
+			Assert.IsFalse(_signalCenter.Exists<BarSignal>(BarActionAsync));
+		}
+
+		[Test]
+		public async Task Subscribe_Async_And_Fire()
+		{
+			CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.CancelAfter(200);
+			CancellationToken cancellationToken = cancellationTokenSource.Token;
+			bool isSignalReceived = false;
+			
+			async Task BarActionAsync(BarSignal _)
+			{
+				await Task.Delay(100, cancellationToken);
+				isSignalReceived = true;
+			}
+			
+			_signalCenter.Subscribe<BarSignal>(BarActionAsync);
+			_signalCenter.Fire(new BarSignal());
+			while (!isSignalReceived)
+			{
+				if (cancellationToken.IsCancellationRequested)
+				{
+					Assert.Fail("Timed out.");
+				}
+				
+				await Task.Yield();
+			}
+			
+			cancellationTokenSource.Dispose();
+		}
+
 		[Test]
 		public void Subscribe_And_Fire()
 		{
