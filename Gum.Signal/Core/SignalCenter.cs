@@ -82,6 +82,11 @@ namespace Gum.Signal.Core
 				}
 			}
 		}
+		
+		public async Task FireAsync<T>(T signal)
+		{
+			await Task.Factory.StartNew(() => Fire(signal));
+		}
 
 		public bool Exists<T>(Action<T> action)
 		{

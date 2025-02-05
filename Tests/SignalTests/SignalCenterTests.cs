@@ -91,13 +91,28 @@ namespace Tests.SignalTests
 			{
 				Assert.AreEqual(VALUE, fooSignal.Value);
 			}
-			void BarAction(BarSignal _) { }
-			
-			_signalCenter.Subscribe<BarSignal>(BarAction);
+
 			_signalCenter.Subscribe<FooSignal>(FooAction);
 			Assert.IsTrue(_signalCenter.Exists<FooSignal>(FooAction));
 
 			_signalCenter.Fire(new FooSignal(VALUE));
+		}
+		
+		[Test]
+		public async Task Subscribe_And_Fire_Async()
+		{
+			FooSignal fooSignalReceived = default;
+			void FooAction(FooSignal fooSignal)
+			{
+				fooSignalReceived = fooSignal;
+			}
+			
+			_signalCenter.Subscribe<FooSignal>(FooAction);
+			Assert.IsTrue(_signalCenter.Exists<FooSignal>(FooAction));
+
+			await _signalCenter.FireAsync(new FooSignal(VALUE));
+			
+			Assert.AreEqual(VALUE, fooSignalReceived.Value);
 		}
 	}
 }
