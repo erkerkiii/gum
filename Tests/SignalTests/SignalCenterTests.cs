@@ -41,6 +41,23 @@ namespace Tests.SignalTests
 		}
 		
 		[Test]
+		public void TryUnsubscribe()
+		{
+			void BarAction(BarSignal _) { }
+			void FooAction(FooSignal _) { }
+
+			_signalCenter.Subscribe<BarSignal>(BarAction);
+			Assert.IsTrue(_signalCenter.Exists<BarSignal>(BarAction));
+			Assert.IsFalse(_signalCenter.Exists<FooSignal>(FooAction));
+			bool isUnsubscribedFromBar = _signalCenter.TryUnsubscribe<BarSignal>(BarAction);
+			bool isUnsubscribedFromFoo = _signalCenter.TryUnsubscribe<FooSignal>(FooAction);
+			Assert.IsFalse(_signalCenter.Exists<FooSignal>(FooAction));
+			Assert.IsFalse(_signalCenter.Exists<BarSignal>(BarAction));
+			Assert.IsTrue(isUnsubscribedFromBar);
+			Assert.IsFalse(isUnsubscribedFromFoo);
+		}
+		
+		[Test]
 		public void Unsubscribe_From_Async_Method()
 		{
 			async Task BarActionAsync(BarSignal _)

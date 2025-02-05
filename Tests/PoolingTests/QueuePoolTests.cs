@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace Tests.PoolingTests
 {
     [TestFixture]
-    public class StackPoolTests
+    public class QueuePoolTests
     {
         private IPool<MockPoolable> _pool;
 
@@ -15,16 +15,16 @@ namespace Tests.PoolingTests
         {
             _poolBuilder = new PoolBuilder<MockPoolable>();
             _pool = _poolBuilder
-                .SetPoolType(PoolType.Stack)
+                .SetPoolType(PoolType.Queue)
                 .FromPoolableInstanceProvider(new MockInstanceProvider())
                 .Build();
 
             _poolBuilder.Clear();
-            Assert.IsTrue(_pool is StackPool<MockPoolable>);
+            Assert.IsTrue(_pool is QueuePool<MockPoolable>);
         }
 
         [Test]
-        public void StackPool_Creates_Instance()
+        public void QueuePool_Creates_Instance()
         {
             MockPoolable mockPoolable = _pool.Get();
             
@@ -33,7 +33,7 @@ namespace Tests.PoolingTests
         }
         
         [Test]
-        public void StackPool_Object_Returns_To_Pool()
+        public void QueuePool_Object_Returns_To_Pool()
         {
             MockPoolable pooledObject = _pool.Get();
             
@@ -44,22 +44,9 @@ namespace Tests.PoolingTests
             
             Assert.IsFalse(pooledObject.IsActive);
         }
-        
-        [Test]
-        public void StackPool_Count_Check_After_Put()
-        {
-            MockPoolable pooledObject = _pool.Get();
-            
-            Assert.IsNotNull(pooledObject);
-            
-            pooledObject.ReturnToPool();
-            pooledObject.ReturnToPool();
-
-            Assert.IsTrue(_pool.Count == 1);
-        }
 
         [Test]
-        public void StackPool_Gets_Erased()
+        public void QueuePool_Gets_Erased()
         {
             _pool.Dispose();
             _pool = null;

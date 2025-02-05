@@ -3,6 +3,7 @@
     public enum PoolType : byte
     {
         Stack,
-        WeakStack
+        WeakStack,
+        Queue
     }
 }

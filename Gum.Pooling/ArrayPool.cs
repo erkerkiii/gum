@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-#if DEBUG || UNITY_EDITOR
+#if GUM_DEBUG
 using Gum.Pooling.Diagnostics;
 #endif
 
@@ -32,7 +32,7 @@ namespace Gum.Pooling
 
 			_pool.Push(array);
 			
-#if DEBUG || UNITY_EDITOR
+#if GUM_DEBUG
 			PoolMonitor.UnreleasedPooledArrays.Remove(array);
 #endif
 		}
@@ -44,7 +44,7 @@ namespace Gum.Pooling
 				? _pool.Pop()
 				: new T[_length];
 			
-#if DEBUG || UNITY_EDITOR
+#if GUM_DEBUG
 			PoolMonitor.UnreleasedPooledArrays.Add(array, new System.Diagnostics.StackTrace().ToString());
 #endif
 			return array;
@@ -86,7 +86,7 @@ namespace Gum.Pooling
 		{
 			_highestCapactiyPool = 0;
 			ArrayPools.Clear();
-#if DEBUG || UNITY_EDITOR
+#if GUM_DEBUG
 			PoolMonitor.UnreleasedPooledArrays.Clear();
 #endif
 		}

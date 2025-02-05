@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-#if DEBUG || UNITY_EDITOR
+#if GUM_DEBUG
 namespace Gum.Pooling.Diagnostics
 {
 	internal static class PoolMonitor

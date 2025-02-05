@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <Version>1.0.20</Version>
+        <Version>1.0.23</Version>
         <Title>Gum.WebRequest</Title>
         <Authors>S. Emre Fıstıkcıoğlu, Semih Çelek, A. Alp Atabey, Mehmet Bütün</Authors>
         <Description>Gum is a collection of tools focusing mainly on game development with the goal of getting rid of the boilerplate code.</Description>
@@ -12,6 +12,7 @@
         <RepositoryUrl>https://github.com/erkerkiii/gum</RepositoryUrl>
         <RepositoryType>Open Source</RepositoryType>
         <PackageTags>unity, unity3D, composition, observer networking csharp unity unity3d observer-pattern unity3d-plugin csharp-library pooling object-pooling</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
 </Project>

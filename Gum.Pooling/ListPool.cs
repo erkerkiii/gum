@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Gum.Pooling.Collections;
 
-#if DEBUG || UNITY_EDITOR
+#if GUM_DEBUG
 using Gum.Pooling.Diagnostics;
 #endif
 
@@ -18,7 +18,7 @@ namespace Gum.Pooling
 			if (!_pool.Contains(list))
 			{
 				_pool.Push(list);
-#if DEBUG || UNITY_EDITOR
+#if GUM_DEBUG
 				PoolMonitor.UnreleasedPooledLists.Remove(list);
 #endif
 			}
@@ -30,7 +30,7 @@ namespace Gum.Pooling
 				? _pool.Pop()
 				: new PooledList<T>();
 
-#if DEBUG || UNITY_EDITOR
+#if GUM_DEBUG
 			PoolMonitor.UnreleasedPooledLists.Add(pooledList, new System.Diagnostics.StackTrace().ToString());
 #endif
 			
