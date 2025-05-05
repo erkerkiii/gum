@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Gum.Core.DataStructures;
 
 namespace Gum.Pooling
@@ -53,8 +52,16 @@ namespace Gum.Pooling
             IPoolable poolable = _objectPool.Count > 0
                 ? _objectPool.Pop()
                 : Create(args);
-            
-            poolable.Reset();
+
+            try
+            {
+                poolable.Reset();
+            }
+            catch (Exception _)
+            {
+                return Get(args);
+            }
+
             return (T)poolable;
         }
 
