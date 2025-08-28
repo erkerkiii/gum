@@ -78,10 +78,39 @@ namespace Gum.Pooling
             }
 
             instance.OnReturnToPoolRequested += () => Put(instance);
+            instance.OnDestroyed += () => RemoveFromPool(instance);
 
             return instance;
         }
 
+        private void RemoveFromPool(IPoolable poolable)
+        {
+            if (poolable == null)
+            {
+                return;
+            }
+
+            if (_objectPool.Count == 0)
+            {
+                return;
+            }
+
+            Stack<IPoolable> tempStack = new Stack<IPoolable>(_objectPool.Count);
+            while (_objectPool.Count > 0)
+            {
+                IPoolable popedPoolable = _objectPool.Pop();
+                if (!ReferenceEquals(popedPoolable, poolable))
+                {
+                    tempStack.Push(popedPoolable);
+                }
+            }
+
+            while (tempStack.Count > 0)
+            {
+                _objectPool.Push(tempStack.Pop());
+            }
+        }
+        
         private void DestroyPool()
         {
             if (_objectPool == null)
