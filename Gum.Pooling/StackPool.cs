@@ -99,7 +99,10 @@ namespace Gum.Pooling
             while (_objectPool.Count > 0)
             {
                 IPoolable popedPoolable = _objectPool.Pop();
-                if (!ReferenceEquals(popedPoolable, poolable)) tempStack.Push(popedPoolable);
+                if (!ReferenceEquals(popedPoolable, poolable))
+                {
+                    tempStack.Push(popedPoolable);
+                }
             }
 
             while (tempStack.Count > 0)
