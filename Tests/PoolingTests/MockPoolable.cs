@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Gum.Pooling;
 
 namespace Tests.PoolingTests
@@ -6,6 +6,7 @@ namespace Tests.PoolingTests
     public class MockPoolable : IPoolable
     {
         public event Action OnReturnToPoolRequested;
+	public event Action OnDestroyed;
 
         public bool IsActive { get; private set; }
         public bool IsErased { get; private set; }
