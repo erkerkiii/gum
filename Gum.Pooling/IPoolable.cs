@@ -7,7 +7,7 @@ namespace Gum.Pooling
         event Action OnReturnToPoolRequested;
         event Action OnDestroyed;
 
-        void Reset();
+        void Reset(object[] args = null);
         void Erase();
     }
 }
