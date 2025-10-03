@@ -58,7 +58,7 @@ namespace Gum.Pooling
                 ? _objectPool.Pop()
                 : Create(args);
             
-            poolable.Reset();
+            poolable.Reset(args);
             return (T)poolable;
         }
 

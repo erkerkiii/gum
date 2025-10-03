@@ -16,7 +16,7 @@ namespace Tests.PoolingTests
             IsActive = true;
         }
         
-        public void Reset()
+        public void Reset(object[] args = null)
         {
             IsActive = true;
         }
