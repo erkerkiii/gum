@@ -19,4 +19,12 @@
 			Value = value;
 		}
 	}
+
+	public sealed class FooReferenceSignal
+	{
+	}
+
+	public sealed class BarReferenceSignal
+	{
+	}
 }

@@ -314,3 +314,11 @@ signalCenter.Subscribe<FooSignal>(Action); //to subscribe
 signalCenter.Unsubscribe<FooSignal>(Action); //to unsubscribe
 signalCenter.Fire(new FooSignal()); //to fire signals
 ```
+
+Dispatch semantics
+
+- Subscribers are invoked in subscription order (per signal type).
+- It is safe to subscribe or unsubscribe from inside a handler, including inside a nested `Fire`. `Fire` works on a snapshot of the subscribers, so no other subscriber is skipped.
+- A subscriber unsubscribed during a `Fire` is not invoked for the rest of that `Fire`.
+- A subscriber added during a `Fire` is first invoked on the next `Fire`.
+- `Unsubscribe` / `TryUnsubscribe` remove every subscription of that handler for the signal type.

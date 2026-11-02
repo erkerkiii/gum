@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,102 +8,63 @@ namespace Gum.Signal.Core
 	{
 		private readonly object _lock = new object();
 
-		private readonly List<Entry> _entries = new List<Entry>();
+		private readonly Dictionary<Type, Subscription[]> _subscriptions = new Dictionary<Type, Subscription[]>();
 
 		public void Subscribe<T>(Action<T> action)
 		{
-			lock (_lock)
-			{
-				_entries.Add(new Entry(action, typeof(T), false));
-			}
+			Add(typeof(T), new Subscription(action, false));
 		}
 
 		public void Subscribe<T>(Func<T, Task> func)
 		{
-			lock (_lock)
-			{
-				_entries.Add(new Entry(func, typeof(T), true));
-			}
+			Add(typeof(T), new Subscription(func, true));
 		}
 
 		public void Unsubscribe<T>(Func<T, Task> func)
 		{
-			lock (_lock)
-			{
-				for (int index = 0; index < _entries.Count; index++)
-				{
-					Entry entry = _entries[index];
-
-					if (entry.Delegate as Func<T, Task> == func)
-					{
-						_entries.Remove(entry);
-					}
-				}
-			}
+			Remove(typeof(T), func);
 		}
 
 		public void Unsubscribe<T>(Action<T> action)
 		{
-			lock (_lock)
-			{
-				for (int index = 0; index < _entries.Count; index++)
-				{
-					Entry entry = _entries[index];
-
-					if (entry.Delegate as Action<T> == action)
-					{
-						_entries.Remove(entry);
-					}
-				}
-			}
+			Remove(typeof(T), action);
 		}
-		
+
 		public bool TryUnsubscribe<T>(Action<T> action)
 		{
-			bool isSuccessful = false;
-			lock (_lock)
-			{
-				for (int index = 0; index < _entries.Count; index++)
-				{
-					Entry entry = _entries[index];
-
-					if (entry.Delegate as Action<T> != action || !_entries.Contains(entry))
-					{
-						continue;
-					}
-					
-					_entries.Remove(entry);
-					isSuccessful = true;
-				}
-			}
-
-			return isSuccessful;
+			return Remove(typeof(T), action);
 		}
-		
+
 		public void Fire<T>(T signal)
 		{
-			int hashCode = typeof(T).GetHashCode();
+			Subscription[] snapshot;
 			lock (_lock)
 			{
-				for (int index = 0; index < _entries.Count; index++)
+				if (!_subscriptions.TryGetValue(typeof(T), out snapshot))
 				{
-					Entry entry = _entries[index];
-					if (entry.TypeHashCode != hashCode)
-					{
-						continue;
-					}
-
-					if (!entry.IsAsync)
-					{
-						((Action<T>)entry.Delegate).Invoke(signal);
-						continue;
-					}
-
-					((Func<T, Task>)entry.Delegate).Invoke(signal);
+					return;
 				}
 			}
+
+			for (int index = 0; index < snapshot.Length; index++)
+			{
+				Subscription subscription = snapshot[index];
+
+				if (subscription.IsRemoved)
+				{
+					continue;
+				}
+
+				if (!subscription.IsAsync)
+				{
+					((Action<T>)subscription.Delegate).Invoke(signal);
+					continue;
+				}
+
+				((Func<T, Task>)subscription.Delegate).Invoke(signal);
+			}
 		}
-		
+
 		public async Task FireAsync<T>(T signal)
 		{
 			await Task.Factory.StartNew(() => Fire(signal));
@@ -111,67 +72,114 @@ namespace Gum.Signal.Core
 
 		public bool Exists<T>(Action<T> action)
 		{
-			lock (_lock)
-			{
-				for (int index = 0; index < _entries.Count; index++)
-				{
-					if (_entries[index].Delegate.Equals(action))
-					{
-						return true;
-					}
-				}
-			}
-
-			return false;
+			return Contains(typeof(T), action);
 		}
-		
+
 		public bool Exists<T>(Func<T, Task> func)
+		{
+			return Contains(typeof(T), func);
+		}
+
+		private void Add(Type type, Subscription subscription)
 		{
 			lock (_lock)
 			{
-				for (int index = 0; index < _entries.Count; index++)
+				Subscription[] current;
+				int count = _subscriptions.TryGetValue(type, out current) ? current.Length : 0;
+
+				Subscription[] next = new Subscription[count + 1];
+				if (count > 0)
 				{
-					if (_entries[index].Delegate.Equals(func))
+					Array.Copy(current, next, count);
+				}
+
+				next[count] = subscription;
+				_subscriptions[type] = next;
+			}
+		}
+
+		private bool Remove(Type type, Delegate @delegate)
+		{
+			lock (_lock)
+			{
+				Subscription[] current;
+				if (!_subscriptions.TryGetValue(type, out current))
+				{
+					return false;
+				}
+
+				int remaining = 0;
+				for (int index = 0; index < current.Length; index++)
+				{
+					if (Equals(current[index].Delegate, @delegate))
+					{
+						current[index].IsRemoved = true;
+						continue;
+					}
+
+					remaining++;
+				}
+
+				if (remaining == current.Length)
+				{
+					return false;
+				}
+
+				if (remaining == 0)
+				{
+					_subscriptions.Remove(type);
+					return true;
+				}
+
+				Subscription[] next = new Subscription[remaining];
+				int nextIndex = 0;
+				for (int index = 0; index < current.Length; index++)
+				{
+					if (!current[index].IsRemoved)
+					{
+						next[nextIndex++] = current[index];
+					}
+				}
+
+				_subscriptions[type] = next;
+				return true;
+			}
+		}
+
+		private bool Contains(Type type, Delegate @delegate)
+		{
+			lock (_lock)
+			{
+				Subscription[] current;
+				if (!_subscriptions.TryGetValue(type, out current))
+				{
+					return false;
+				}
+
+				for (int index = 0; index < current.Length; index++)
+				{
+					if (Equals(current[index].Delegate, @delegate))
 					{
 						return true;
 					}
 				}
-			}
 
-			return false;
+				return false;
+			}
 		}
 
-		private readonly struct Entry : IEquatable<Entry>
+		private sealed class Subscription
 		{
 			public readonly Delegate Delegate;
 
-			public readonly int TypeHashCode;
-
 			public readonly bool IsAsync;
 
-			public Entry(Delegate @delegate, Type type, bool isAsync)
+			public volatile bool IsRemoved;
+
+			public Subscription(Delegate @delegate, bool isAsync)
 			{
 				Delegate = @delegate;
 				IsAsync = isAsync;
-				TypeHashCode = type.GetHashCode();
-			}
-
-			public bool Equals(Entry other)
-			{
-				return Equals(Delegate, other.Delegate) && TypeHashCode == other.TypeHashCode;
-			}
-
-			public override bool Equals(object obj)
-			{
-				return obj is Entry other && Equals(other);
-			}
-
-			public override int GetHashCode()
-			{
-				unchecked
-				{
-					return ((Delegate != null ? Delegate.GetHashCode() : 0) * 397) ^ TypeHashCode;
-				}
 			}
 		}
 	}

@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Gum.Signal.Core;
 using NUnit.Framework;
@@ -128,8 +130,171 @@ namespace Tests.SignalTests
 			Assert.IsTrue(_signalCenter.Exists<FooSignal>(FooAction));
 
 			await _signalCenter.FireAsync(new FooSignal(VALUE));
-			
+
 			Assert.AreEqual(VALUE, fooSignalReceived.Value);
+		}
+
+		[Test]
+		public void Fire_When_Handler_Unsubscribes_Itself_Next_Subscriber_Is_Still_Invoked()
+		{
+			List<string> calls = new List<string>();
+
+			void First(FooSignal _) => calls.Add("First");
+			void SelfUnsubscribing(FooSignal _)
+			{
+				calls.Add("SelfUnsubscribing");
+				_signalCenter.Unsubscribe<FooSignal>(SelfUnsubscribing);
+			}
+			void Last(FooSignal _) => calls.Add("Last");
+
+			_signalCenter.Subscribe<FooSignal>(First);
+			_signalCenter.Subscribe<FooSignal>(SelfUnsubscribing);
+			_signalCenter.Subscribe<FooSignal>(Last);
+
+			_signalCenter.Fire(new FooSignal(VALUE));
+
+			CollectionAssert.AreEqual(new[] { "First", "SelfUnsubscribing", "Last" }, calls);
+		}
+
+		[Test]
+		public void Fire_When_Handler_Unsubscribes_Earlier_Subscriber_Remaining_Subscribers_Are_Invoked()
+		{
+			List<string> calls = new List<string>();
+
+			void First(FooSignal _) => calls.Add("First");
+			void UnsubscribesFirst(FooSignal _)
+			{
+				calls.Add("UnsubscribesFirst");
+				_signalCenter.Unsubscribe<FooSignal>(First);
+			}
+			void Last(FooSignal _) => calls.Add("Last");
+
+			_signalCenter.Subscribe<FooSignal>(First);
+			_signalCenter.Subscribe<FooSignal>(UnsubscribesFirst);
+			_signalCenter.Subscribe<FooSignal>(Last);
+
+			_signalCenter.Fire(new FooSignal(VALUE));
+
+			CollectionAssert.AreEqual(new[] { "First", "UnsubscribesFirst", "Last" }, calls);
+		}
+
+		[Test]
+		public void Fire_When_Handler_Unsubscribes_Later_Subscriber_It_Is_Not_Invoked()
+		{
+			List<string> calls = new List<string>();
+
+			void Middle(FooSignal _) => calls.Add("Middle");
+			void UnsubscribesMiddle(FooSignal _)
+			{
+				calls.Add("UnsubscribesMiddle");
+				_signalCenter.Unsubscribe<FooSignal>(Middle);
+			}
+			void Last(FooSignal _) => calls.Add("Last");
+
+			_signalCenter.Subscribe<FooSignal>(UnsubscribesMiddle);
+			_signalCenter.Subscribe<FooSignal>(Middle);
+			_signalCenter.Subscribe<FooSignal>(Last);
+
+			_signalCenter.Fire(new FooSignal(VALUE));
+
+			CollectionAssert.AreEqual(new[] { "UnsubscribesMiddle", "Last" }, calls);
+		}
+
+		[Test]
+		public void Fire_When_Nested_Fire_Handler_Unsubscribes_Outer_Subscribers_Are_Invoked()
+		{
+			List<string> calls = new List<string>();
+
+			void FiresBar(FooSignal _)
+			{
+				calls.Add("FiresBar");
+				_signalCenter.Fire(new BarSignal(VALUE));
+			}
+			void UnsubscribesFiresBar(BarSignal _)
+			{
+				calls.Add("UnsubscribesFiresBar");
+				_signalCenter.Unsubscribe<FooSignal>(FiresBar);
+			}
+			void Last(FooSignal _) => calls.Add("Last");
+
+			_signalCenter.Subscribe<BarSignal>(UnsubscribesFiresBar);
+			_signalCenter.Subscribe<FooSignal>(FiresBar);
+			_signalCenter.Subscribe<FooSignal>(Last);
+
+			_signalCenter.Fire(new FooSignal(VALUE));
+
+			CollectionAssert.AreEqual(new[] { "FiresBar", "UnsubscribesFiresBar", "Last" }, calls);
+		}
+
+		[Test]
+		public void Fire_When_Handler_Subscribes_During_Fire_New_Subscriber_Is_Invoked_From_Next_Fire()
+		{
+			List<string> calls = new List<string>();
+			bool hasSubscribedLate = false;
+
+			void Late(FooSignal _) => calls.Add("Late");
+			void SubscribesLate(FooSignal _)
+			{
+				calls.Add("SubscribesLate");
+				if (hasSubscribedLate)
+				{
+					return;
+				}
+
+				hasSubscribedLate = true;
+				_signalCenter.Subscribe<FooSignal>(Late);
+			}
+
+			_signalCenter.Subscribe<FooSignal>(SubscribesLate);
+
+			_signalCenter.Fire(new FooSignal(VALUE));
+			CollectionAssert.AreEqual(new[] { "SubscribesLate" }, calls);
+
+			_signalCenter.Fire(new FooSignal(VALUE));
+			CollectionAssert.AreEqual(new[] { "SubscribesLate", "SubscribesLate", "Late" }, calls);
+		}
+
+		[Test]
+		public void Unsubscribe_Removes_All_Duplicate_Subscriptions()
+		{
+			int callCount = 0;
+
+			void FooAction(FooSignal _) => callCount++;
+
+			_signalCenter.Subscribe<FooSignal>(FooAction);
+			_signalCenter.Subscribe<FooSignal>(FooAction);
+			_signalCenter.Unsubscribe<FooSignal>(FooAction);
+
+			Assert.IsFalse(_signalCenter.Exists<FooSignal>(FooAction));
+			_signalCenter.Fire(new FooSignal(VALUE));
+			Assert.AreEqual(0, callCount);
+		}
+
+		[Test]
+		public void TryUnsubscribe_Removes_All_Duplicate_Subscriptions()
+		{
+			int callCount = 0;
+
+			void FooAction(FooSignal _) => callCount++;
+
+			_signalCenter.Subscribe<FooSignal>(FooAction);
+			_signalCenter.Subscribe<FooSignal>(FooAction);
+
+			Assert.IsTrue(_signalCenter.TryUnsubscribe<FooSignal>(FooAction));
+			Assert.IsFalse(_signalCenter.Exists<FooSignal>(FooAction));
+			_signalCenter.Fire(new FooSignal(VALUE));
+			Assert.AreEqual(0, callCount);
+		}
+
+		[Test]
+		public void Exists_Ignores_Subscriptions_Of_Other_Signal_Types()
+		{
+			Action<object> handler = _ => { };
+
+			_signalCenter.Subscribe<FooReferenceSignal>(handler);
+
+			Assert.IsTrue(_signalCenter.Exists<FooReferenceSignal>(handler));
+			Assert.IsFalse(_signalCenter.Exists<BarReferenceSignal>(handler));
 		}
 	}
 }
